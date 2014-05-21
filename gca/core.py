@@ -134,10 +134,10 @@ class Session(object):
         return code
 
     @authenticated
-    def get_all_abstracts(self, conference):
+    def get_all_abstracts(self, conference, raw=False):
         url = "%s/api/conferences/%s/allAbstracts" % (self.url, conference)
         data = self._fetch(url)
-        return [Abstract(abstract) for abstract in data]
+        return [Abstract(abstract) for abstract in data] if not raw else data
 
     def get_conference(self, conference):
         url = "%s/api/conferences/%s" % (self.url, conference)
