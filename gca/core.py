@@ -89,6 +89,10 @@ class Abstract(BaseObject):
         return [Affiliation(a) for a in self.__data['affiliations']]
 
     @property
+    def acknowledgements(self):
+        return self.__data['acknowledgements']
+
+    @property
     def topic(self):
         return self.__data['topic']
 
