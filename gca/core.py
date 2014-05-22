@@ -166,4 +166,6 @@ class Session(object):
         resp = url_opener.open(url)
         if resp.getcode() != 200:
             raise TransportError(resp.getcode(), "Could not fetch data")
-        return json.loads(resp.read())
+        data = resp.read()
+        text = data.decode('utf-8')
+        return json.loads(text)
