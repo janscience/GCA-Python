@@ -48,6 +48,18 @@ class Author(BaseObject):
     def __init__(self, data):
         super(Author, self).__init__(data)
 
+    @property
+    def first_name(self):
+        return self._data['firstName']
+
+    @property
+    def middle_name(self):
+        return self._data['middleName']
+
+    @property
+    def last_name(self):
+        return self._data['lastName']
+
     def format_name(self):
         d = self._data
         middle = d['middleName'] + u' ' if d['middleName'] else u""
