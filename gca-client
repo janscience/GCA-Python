@@ -3,6 +3,8 @@ from __future__ import print_function
 
 import argparse
 import json
+import sys
+
 from gca.core import Session
 from gca.auth import NetRCAuth
 
@@ -23,4 +25,5 @@ if __name__ == '__main__':
 
     if args.cmd == 'abstracts':
         abstracts = session.get_all_abstracts(args.conference, raw=True)
-        print(json.dumps(abstracts, sort_keys=True, indent=4, separators=(',', ': ')))
+        data = json.dumps(abstracts, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+        sys.stdout.write(data.encode('utf-8'))
