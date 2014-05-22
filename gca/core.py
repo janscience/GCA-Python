@@ -121,6 +121,14 @@ class Abstract(BaseObject):
     def topic(self):
         return self.__data['topic']
 
+    @property
+    def is_talk(self):
+        return self.__data['isTalk']
+
+    @property
+    def reason_for_talk(self):
+        return self.__data['reasonForTalk']
+
 
 def authenticated(method):
     def wrapper(self, *args, **kwargs):
