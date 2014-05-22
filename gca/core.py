@@ -59,6 +59,15 @@ class Author(BaseObject):
         return ', '.join(af_corrected)
 
 
+class Reference(BaseObject):
+    def __init__(self, data):
+        super(Reference, self).__init__(data)
+
+    @property
+    def text(self):
+        return self._data['text']
+
+
 class Abstract(BaseObject):
     def __init__(self, data):
         super(Abstract, self).__init__(data)
