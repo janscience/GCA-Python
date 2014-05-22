@@ -102,6 +102,10 @@ class Abstract(BaseObject):
         return self.__data['acknowledgements']
 
     @property
+    def references(self):
+        return [Reference(r) for r in self.__data['references']]
+
+    @property
     def topic(self):
         return self.__data['topic']
 
