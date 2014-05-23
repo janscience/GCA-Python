@@ -133,6 +133,11 @@ class Abstract(BaseObject):
     def reason_for_talk(self):
         return self.__data['reasonForTalk']
 
+    @classmethod
+    def from_data(cls, data):
+        js = json.loads(data)
+        return [Abstract(a) for a in js]
+
 
 def authenticated(method):
     def wrapper(self, *args, **kwargs):
