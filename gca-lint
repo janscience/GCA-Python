@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from collections import defaultdict
+
+from gca.core import Abstract
+
+import argparse
+import codecs
+import sys
+
+
+class Issue(object):
+    def __init__(self, level, message, abstract):
+        self.level = level
+        self.message = message
+        self.abstract = abstract
+
+    def __str__(self):
+        return u'[%s] %s {%s}' % (self.level, self.message, self.abstract.uuid)
+
+    def __repr__(self):
+        return str(self)
+
+
+def check_abstract(abstract):
+    if abstract.title is None or not len(abstract.title):
+        yield Issue('Error', 'Abstract has no title', abstract)
+
+    if not len(abstract.authors):
+        yield Issue('Error', 'Abstract has no authors', abstract)
+
+    if not len(abstract.affiliations):
+        yield Issue('Error', 'Abstract has no affiliations', abstract)
+
+    for author in abstract.authors:
+        if len(author.affiliations) < 1:
+            aid = author.last_name if author.last_name else author.uuid
+            yield Issue('Error', 'Author "%s" has no affiliation' % aid, abstract)
+
+    nrefs = len(abstract.references)
+    if nrefs > 10:
+        yield Issue('Warning', 'Abstract has %d references' % nrefs, abstract)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='GCA Linter')
+    parser.add_argument('file', type=str, default='-')
+    args = parser.parse_args()
+
+    fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
+    abstracts = Abstract.from_data(fd.read())
+    abstract_map = {abstract.uuid: abstract for abstract in abstracts}
+
+    issues = [(abstract.uuid, list(check_abstract(abstract))) for abstract in abstracts]
+    issues = filter(lambda x: len(x[1]), issues)
+
+    d = defaultdict(list)
+    for i in issues:
+        d[i[0]] += i[1]
+
+    for k, v in d.iteritems():
+        abstract = abstract_map[k]
+        author = abstract.authors[0].last_name if len(abstract.authors) else ''
+        title = abstract.title if abstract.title is not None else ''
+        print('%s' % k)
+        print('  %.10s - %.60s...' % (author, title))
+        for i in v:
+            print('    [%s] %s' % (i.level, i.message))
+        print('')
+
+    print('%d abstract with issues.' % len(d))
