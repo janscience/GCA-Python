@@ -60,6 +60,10 @@ class Author(BaseObject):
     def last_name(self):
         return self._data['lastName']
 
+    @property
+    def affiliations(self):
+        return self._data['affiliations']
+
     def format_name(self):
         d = self._data
         middle = d['middleName'] + u' ' if d['middleName'] else u""
