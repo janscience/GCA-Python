@@ -131,6 +131,10 @@ class Abstract(BaseObject):
         return [Reference(r) for r in self.__data['references']]
 
     @property
+    def figures(self):
+        return [Figure(f) for f in self.__data['figures']]
+
+    @property
     def topic(self):
         return self.__data['topic']
 
