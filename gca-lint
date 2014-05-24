@@ -44,6 +44,10 @@ def check_abstract(abstract):
     if nrefs > 10:
         yield Issue('Warning', 'Abstract has %d references' % nrefs, abstract)
 
+    nfigures = len(abstract.figures)
+    if nfigures > 1:
+        yield Issue('Warning', 'Abstract has %d figures' % nfigures, abstract)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Linter')
