@@ -84,6 +84,15 @@ class Reference(BaseObject):
         return self._data['text']
 
 
+class Figure(BaseObject):
+    def __init__(self, data):
+        super(Figure, self).__init__(data)
+
+    @property
+    def caption(self):
+        return self._data['caption']
+
+
 class Abstract(BaseObject):
     def __init__(self, data):
         super(Abstract, self).__init__(data)
