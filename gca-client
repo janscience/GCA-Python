@@ -19,6 +19,10 @@ if __name__ == '__main__':
     parser_abs.add_argument('conference', type=str, help='for which conference')
     parser_abs.set_defaults(cmd='abstracts')
 
+    parser_abs = subparsers.add_parser("image", help='get figure images')
+    parser_abs.add_argument('uuid', type=str, nargs='+', help='figure uuid')
+    parser_abs.set_defaults(cmd='image')
+
     args = parser.parse_args()
 
     auth = NetRCAuth()
@@ -31,3 +35,7 @@ if __name__ == '__main__':
         abstracts = session.get_all_abstracts(args.conference, raw=True)
         data = json.dumps(abstracts, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
         sys.stdout.write(data.encode('utf-8'))
+    elif args.cmd == 'image':
+        paths = [session.get_figure_image(uuid) for uuid in args.uuid]
+        for p in paths:
+            print(p)
