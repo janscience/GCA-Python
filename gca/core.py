@@ -5,6 +5,7 @@ import urllib2
 import urllib
 from cookielib import CookieJar
 from urlparse import urlparse
+import os
 
 
 class TransportError(Exception):
@@ -201,6 +202,28 @@ class Session(object):
     def get_conference(self, conference):
         url = "%s/api/conferences/%s" % (self.url, conference)
         data = self._fetch(url)
+        return data
+
+    def get_figure_image(self, uuid, add_ext=True, path=None):
+        url = "%s/api/figures/%s/image" % (self.url, uuid)
+        data = self._fetch_binary(url)
+        fn = os.path.join(path, uuid) if path is not None else uuid
+        with open(fn, 'w+') as fd:
+            fd.write(data)
+        if add_ext:
+            import imghdr
+            ext = imghdr.what(fn)
+            new_fn = fn + '.' + ext
+            os.rename(fn, new_fn)
+            fn = new_fn
+        return fn
+
+    def _fetch_binary(self, url):
+        url_opener = self.__url_opener
+        resp = url_opener.open(url)
+        if resp.getcode() != 200:
+            raise TransportError(resp.getcode(), "Could not fetch data")
+        data = resp.read()
         return data
 
     def _fetch(self, url):
