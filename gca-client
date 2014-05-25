@@ -12,6 +12,7 @@ from gca.auth import NetRCAuth
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Client')
     parser.add_argument('url', type=str)
+    parser.add_argument('-a', '--auth', dest='auth', action='store_true', default=False, help='force authentication')
     subparsers = parser.add_subparsers(help='commands')
 
     parser_abs = subparsers.add_parser("abstracts", help='list abstracts')
@@ -22,6 +23,9 @@ if __name__ == '__main__':
 
     auth = NetRCAuth()
     session = Session(args.url, auth)
+
+    if args.auth:
+        session.authenticate()
 
     if args.cmd == 'abstracts':
         abstracts = session.get_all_abstracts(args.conference, raw=True)
