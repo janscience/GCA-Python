@@ -6,6 +6,7 @@ import urllib
 from cookielib import CookieJar
 from urlparse import urlparse
 import os
+import sys
 
 
 class TransportError(Exception):
@@ -220,6 +221,7 @@ class Session(object):
         self.__url_opener = opener
         self.__auth = authenticator
         self.__is_authenticated = False
+        self._guess_mime_ext = None
 
     @property
     def url(self):
@@ -261,12 +263,17 @@ class Session(object):
     def get_figure_image(self, uuid, add_ext=True, path=None):
         url = "%s/api/figures/%s/image" % (self.url, uuid)
         data = self._fetch_binary(url)
+        if path is not None and not os.path.exists(path):
+            os.mkdir(path)
+
         fn = os.path.join(path, uuid) if path is not None else uuid
         with open(fn, 'w+') as fd:
             fd.write(data)
         if add_ext:
-            import imghdr
-            ext = imghdr.what(fn)
+            ext = self._guess_filetype(fn)
+            if ext is None:
+                sys.stderr.write('[W] Could not determine image type for %s\n' % uuid)
+                return fn
             new_fn = fn + '.' + ext
             os.rename(fn, new_fn)
             fn = new_fn
@@ -314,3 +321,16 @@ class Session(object):
         data = resp.read()
         text = data.decode('utf-8')
         return json.loads(text)
+
+    def _guess_filetype(self, path):
+        import imghdr
+        ext = imghdr.what(path)
+        if ext is None:
+            import subprocess
+            if self._guess_mime_ext is None:
+                import mimetypes
+                mimetypes.init()
+                self._guess_mime_ext = mimetypes.guess_extension
+            x = subprocess.check_output(['file', '-b', '--mime-type', path]).strip()
+            ext = self._guess_mime_ext(x)
+        return ext
