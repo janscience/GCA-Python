@@ -143,6 +143,13 @@ class Abstract(BaseObject):
         return [LogEntry(e) for e in log_data]
 
     @property
+    def owners(self):
+        owner_data = self.__data['owners']
+        if type(owner_data) != list:
+            return None
+        return [Owner(o) for o in owner_data]
+
+    @property
     def topic(self):
         return self.__data['topic']
 
