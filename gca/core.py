@@ -269,11 +269,7 @@ class Session(object):
 
     @authenticated
     def get_owners(self, uuid_or_url, otype='abstracts', raw=False):
-        if uuid_or_url.startswith('http:'):
-            url = uuid_or_url
-        else:
-            url = "%s/api/%s/%s/owners" % (self.url, otype, uuid_or_url)
-
+        url = self._build_url(uuid_or_url, 'owners', otype=otype)
         data = self._fetch(url)
         return data if raw else [Owner(o) for o in data]
 
