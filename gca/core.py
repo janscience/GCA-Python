@@ -227,6 +227,16 @@ class Session(object):
             fn = new_fn
         return fn
 
+    @authenticated
+    def get_owners(self, uuid_or_url, otype='abstracts', raw=False):
+        if uuid_or_url.startswith('http:'):
+            url = uuid_or_url
+        else:
+            url = "%s/api/%s/%s/owners" % (self.url, otype, uuid_or_url)
+
+        data = self._fetch(url)
+        return data if raw else [Owner(o) for o in data]
+
     def _fetch_binary(self, url):
         url_opener = self.__url_opener
         resp = url_opener.open(url)
