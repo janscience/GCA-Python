@@ -9,6 +9,11 @@ from gca.core import Session
 from gca.auth import NetRCAuth
 
 
+def write_json(json_data):
+    data = json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+    sys.stdout.write(data.encode('utf-8'))
+    return data
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Client')
     parser.add_argument('url', type=str)
@@ -38,8 +43,7 @@ if __name__ == '__main__':
 
     if args.cmd == 'abstracts':
         abstracts = session.get_all_abstracts(args.conference, raw=True)
-        data = json.dumps(abstracts, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
-        sys.stdout.write(data.encode('utf-8'))
+        write_json(abstracts)
     elif args.cmd == 'image':
         paths = [session.get_figure_image(uuid) for uuid in args.uuid]
         for p in paths:
@@ -47,5 +51,4 @@ if __name__ == '__main__':
     elif args.cmd == 'owners':
         import itertools
         owners = itertools.chain.from_iterable(session.get_owners(uuid, args.otype, raw=True) for uuid in args.uuid)
-        data = json.dumps(list(owners), sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
-        sys.stdout.write(data.encode('utf-8'))
+        write_json(list(owners))
