@@ -33,6 +33,10 @@ if __name__ == '__main__':
     parser_abs.add_argument('uuid', type=str, nargs='+', help='object uuid')
     parser_abs.set_defaults(cmd='owners')
 
+    parser_abs = subparsers.add_parser("log", help='get state log of an abstract')
+    parser_abs.add_argument('uuid', type=str, help='abstract uuid to fetch log for')
+    parser_abs.set_defaults(cmd='state_log')
+
     args = parser.parse_args()
 
     auth = NetRCAuth()
@@ -52,3 +56,6 @@ if __name__ == '__main__':
         import itertools
         owners = itertools.chain.from_iterable(session.get_owners(uuid, args.otype, raw=True) for uuid in args.uuid)
         write_json(list(owners))
+    elif args.cmd == 'state_log':
+        log = session.get_state_log(args.uuid, raw=True)
+        write_json(log)
