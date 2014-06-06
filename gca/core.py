@@ -263,6 +263,19 @@ class Session(object):
         data = self._fetch(url)
         return data if raw else [Owner(o) for o in data]
 
+    @authenticated
+    def get_state_log(self, uuid_or_url, raw=False):
+        url = self._build_url(uuid_or_url, 'stateLog', otype='abstracts')
+        data = self._fetch(url)
+        return data if raw else [LogEntry(e) for e in data]
+
+    def _build_url(self, uuid_or_url, target, otype='abstracts'):
+        if uuid_or_url.startswith('http:'):
+            url = uuid_or_url
+        else:
+            url = "%s/api/%s/%s/%s" % (self.url, otype, uuid_or_url, target)
+        return url
+
     def _complete_abstract(self, abstract):
         owners = self.get_owners(abstract['owners'], raw=True)
         abstract.update({'owners': owners})
