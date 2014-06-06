@@ -162,6 +162,27 @@ class Owner(BaseObject):
         return self._data['mail']
 
 
+class LogEntry(object):
+    def __init__(self, data):
+        self._data = data
+
+    @property
+    def timestamp(self):
+        return self._data['timestamp']
+
+    @property
+    def state(self):
+        return self._data['state']
+
+    @property
+    def editor(self):
+        return self._data['editor']
+
+    @property
+    def note(self):
+        return self._data['note']
+
+
 def authenticated(method):
     def wrapper(self, *args, **kwargs):
         if not self.is_authenticated:
