@@ -203,10 +203,15 @@ class Session(object):
         return code
 
     @authenticated
-    def get_all_abstracts(self, conference, raw=False):
+    def get_all_abstracts(self, conference, raw=False, full=False):
         url = "%s/api/conferences/%s/allAbstracts" % (self.url, conference)
         data = self._fetch(url)
-        return [Abstract(abstract) for abstract in data] if not raw else data
+
+        if full:
+            data = [self._complete_abstract(a) for a in data]
+
+        all_abstracts = [Abstract(abstract) for abstract in data] if not raw else data
+        return all_abstracts
 
     def get_conference(self, conference):
         url = "%s/api/conferences/%s" % (self.url, conference)
@@ -236,6 +241,11 @@ class Session(object):
 
         data = self._fetch(url)
         return data if raw else [Owner(o) for o in data]
+
+    def _complete_abstract(self, abstract):
+        owners = self.get_owners(abstract['owners'], raw=True)
+        abstract.update({'owners': owners})
+        return abstract
 
     def _fetch_binary(self, url):
         url_opener = self.__url_opener
