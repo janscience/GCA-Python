@@ -52,6 +52,10 @@ def check_abstract(abstract):
     if nlog < 1:
         yield Issue('Warning', 'Abstract has no state log', abstract)
 
+    nowners = len(abstract.owners)
+    if nowners < 1:
+        yield Issue('Error', 'Abstract has no owner', abstract)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Linter')
