@@ -181,8 +181,13 @@ class LogEntry(object):
         self._data = data
 
     @property
-    def timestamp(self):
+    def timestamp_str(self):
         return self._data['timestamp']
+
+    @property
+    def timestamp(self):
+        import isodate
+        return isodate.parse_datetime(self._data['timestamp'])
 
     @property
     def state(self):
