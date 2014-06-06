@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     parser_abs = subparsers.add_parser("image", help='get figure images')
     parser_abs.add_argument('uuid', type=str, nargs='+', help='figure uuid')
+    parser_abs.add_argument('--path', type=str, default=None, help='path to store the figures in')
     parser_abs.set_defaults(cmd='image')
 
     parser_abs = subparsers.add_parser("owners", help='get owner of an object')
@@ -50,7 +51,7 @@ if __name__ == '__main__':
         abstracts = session.get_all_abstracts(args.conference, raw=True, full=args.full)
         write_json(abstracts)
     elif args.cmd == 'image':
-        paths = [session.get_figure_image(uuid) for uuid in args.uuid]
+        paths = [session.get_figure_image(uuid, path=args.path) for uuid in args.uuid]
         for p in paths:
             print(p)
     elif args.cmd == 'owners':
