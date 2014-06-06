@@ -23,6 +23,11 @@ if __name__ == '__main__':
     parser_abs.add_argument('uuid', type=str, nargs='+', help='figure uuid')
     parser_abs.set_defaults(cmd='image')
 
+    parser_abs = subparsers.add_parser("owners", help='get owner of an object')
+    parser_abs.add_argument('-t', '--type', type=str, help='type to fetch [abstract]', default='abstracts', dest='otype')
+    parser_abs.add_argument('uuid', type=str, nargs='+', help='object uuid')
+    parser_abs.set_defaults(cmd='owners')
+
     args = parser.parse_args()
 
     auth = NetRCAuth()
@@ -39,3 +44,8 @@ if __name__ == '__main__':
         paths = [session.get_figure_image(uuid) for uuid in args.uuid]
         for p in paths:
             print(p)
+    elif args.cmd == 'owners':
+        import itertools
+        owners = itertools.chain.from_iterable(session.get_owners(uuid, args.otype, raw=True) for uuid in args.uuid)
+        data = json.dumps(list(owners), sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+        sys.stdout.write(data.encode('utf-8'))
