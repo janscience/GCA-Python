@@ -136,6 +136,13 @@ class Abstract(BaseObject):
         return [Figure(f) for f in self.__data['figures']]
 
     @property
+    def log(self):
+        log_data = self.__data['stateLog']
+        if type(log_data) != list:
+            return None
+        return [LogEntry(e) for e in log_data]
+
+    @property
     def topic(self):
         return self.__data['topic']
 
