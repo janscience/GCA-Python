@@ -153,6 +153,15 @@ class Abstract(BaseObject):
         return [Abstract(a) for a in js]
 
 
+class Owner(BaseObject):
+    def __init__(self, data):
+        super(Owner, self).__init__(data)
+
+    @property
+    def email(self):
+        return self._data['mail']
+
+
 def authenticated(method):
     def wrapper(self, *args, **kwargs):
         if not self.is_authenticated:
