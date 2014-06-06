@@ -279,6 +279,8 @@ class Session(object):
     def _complete_abstract(self, abstract):
         owners = self.get_owners(abstract['owners'], raw=True)
         abstract.update({'owners': owners})
+        log = self.get_state_log(abstract['stateLog'], raw=True)
+        abstract.update({'stateLog': log})
         return abstract
 
     def _fetch_binary(self, url):
