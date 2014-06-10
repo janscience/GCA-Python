@@ -165,11 +165,18 @@ class Abstract(BaseObject):
     def select_field(self, field):
         def getattr_maybelist(obj, name):
             if obj is None:
-                return None
+                return []
             if type(obj) == list:
+
+                if name.startswith('[') and name.endswith(']'):
+                    idx = int(name[1:-1])
+                    return [obj[idx]] if idx < len(obj) else []
+
                 return [x for o in obj for x in getattr_maybelist(o, name)]
             else:
-                return [getattr(obj, name)]
+                x = getattr(obj, name)
+                return x if type(x) == list else [x]
+
         return reduce(getattr_maybelist, field, self)
 
     @classmethod
