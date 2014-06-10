@@ -180,6 +180,12 @@ class Abstract(BaseObject):
     def to_data(self):
         return self.__data
 
+    @staticmethod
+    def to_json(abstracts):
+        js = json.dumps([a.to_data() for a in abstracts], sort_keys=True, indent=4,
+                        separators=(',', ': '), ensure_ascii=False)
+        return js
+
 
 class Owner(BaseObject):
     def __init__(self, data):
