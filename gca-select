@@ -11,15 +11,6 @@ import sys
 import itertools as it
 
 
-def getattr_maybelist(obj, name):
-    if obj is None:
-        return None
-    if type(obj) == list:
-        return [x for o in obj for x in getattr_maybelist(o, name)]
-    else:
-        return [getattr(obj, name)]
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Selector - select field values')
     parser.add_argument('file', type=str, default='-')
@@ -32,7 +23,7 @@ if __name__ == '__main__':
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
     abstracts = Abstract.from_data(fd.read())
 
-    val = it.chain.from_iterable(reduce(getattr_maybelist, f, a) for a in abstracts for f in fields)
+    val = it.chain.from_iterable(a.select_field(f) for a in abstracts for f in fields)
     val = filter(lambda a: a is not None, val)
     data = delimiter.join(val)
     sys.stdout.write(data.encode('utf-8'))
