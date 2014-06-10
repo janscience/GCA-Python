@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from gca.core import Abstract
+from gca.util import make_fields
 
 import argparse
 import codecs
@@ -19,7 +20,7 @@ if __name__ == '__main__':
 
     delimiter = '\n'
 
-    fields = [field.split('.') for field in args.fields]
+    fields = [make_fields(field) for field in args.fields]
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
     abstracts = Abstract.from_data(fd.read())
 
