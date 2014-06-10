@@ -162,6 +162,16 @@ class Abstract(BaseObject):
     def reason_for_talk(self):
         return self.__data['reasonForTalk']
 
+    def select_field(self, field):
+        def getattr_maybelist(obj, name):
+            if obj is None:
+                return None
+            if type(obj) == list:
+                return [x for o in obj for x in getattr_maybelist(o, name)]
+            else:
+                return [getattr(obj, name)]
+        return reduce(getattr_maybelist, field, self)
+
     @classmethod
     def from_data(cls, data):
         js = json.loads(data)
