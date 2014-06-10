@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from gca.core import Abstract
+from gca.util import make_fields
+
+import argparse
+import codecs
+import sys
+
+
+def get_sorter(field):
+    reverse = True
+    if field.startswith('+'):
+        reverse = False
+        field = field[1:]
+
+    fields = make_fields(field)
+
+    def sort_fn(abstract):
+        val = abstract.select_field(fields)
+        return val[0].strip() if len(val) else None
+
+    return {'fn': sort_fn, 'reverse': reverse}
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='GCA Sort - sort list of abstract by fields')
+    parser.add_argument('file', type=str, default='-')
+    parser.add_argument('fields', type=str, nargs='+', help='fields to sort for')
+    args = parser.parse_args()
+
+    sorter = [get_sorter(f) for f in args.fields]
+    fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
+    abstracts = Abstract.from_data(fd.read())
+    fd.close()
+
+    for s in sorter:
+        abstracts = sorted(abstracts, key=s['fn'], reverse=s['reverse'])
+
+    data = Abstract.to_json(abstracts)
+    sys.stdout.write(data.encode('utf-8'))
