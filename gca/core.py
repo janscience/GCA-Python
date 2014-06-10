@@ -182,8 +182,7 @@ class Abstract(BaseObject):
 
     @staticmethod
     def to_json(abstracts):
-        js = json.dumps([a.to_data() for a in abstracts], sort_keys=True, indent=4,
-                        separators=(',', ': '), ensure_ascii=False)
+        js = Session.to_json([a.to_data() for a in abstracts])
         return js
 
 
@@ -353,3 +352,9 @@ class Session(object):
             x = subprocess.check_output(['file', '-b', '--mime-type', path]).strip()
             ext = self._guess_mime_ext(x)
         return ext
+
+    @staticmethod
+    def to_json(data):
+        js = json.dumps(data, sort_keys=True, indent=4,
+                        separators=(',', ': '), ensure_ascii=False)
+        return js
