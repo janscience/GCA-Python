@@ -2,7 +2,6 @@
 from __future__ import print_function
 
 import argparse
-import json
 import sys
 
 from gca.core import Session
@@ -10,7 +9,7 @@ from gca.auth import NetRCAuth
 
 
 def write_json(json_data):
-    data = json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+    data = Session.to_json(json_data)
     sys.stdout.write(data.encode('utf-8'))
     return data
 
