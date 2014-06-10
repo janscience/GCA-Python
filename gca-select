@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from gca.core import Abstract
+
+import argparse
+import codecs
+import sys
+import itertools as it
+
+
+def getattr_maybelist(obj, name):
+    if obj is None:
+        return None
+    if type(obj) == list:
+        return [x for o in obj for x in getattr_maybelist(o, name)]
+    else:
+        return [getattr(obj, name)]
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='GCA Selector - select field values')
+    parser.add_argument('file', type=str, default='-')
+    parser.add_argument('fields', type=str, nargs='+', help='fields to select')
+    args = parser.parse_args()
+
+    delimiter = '\n'
+
+    fields = [field.split('.') for field in args.fields]
+    fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
+    abstracts = Abstract.from_data(fd.read())
+
+    val = it.chain.from_iterable(reduce(getattr_maybelist, f, a) for a in abstracts for f in fields)
+    val = filter(lambda a: a is not None, val)
+    data = delimiter.join(val)
+    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(delimiter.encode('utf-8'))
