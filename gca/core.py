@@ -177,6 +177,9 @@ class Abstract(BaseObject):
         js = json.loads(data)
         return [Abstract(a) for a in js]
 
+    def to_data(self):
+        return self.__data
+
 
 class Owner(BaseObject):
     def __init__(self, data):
