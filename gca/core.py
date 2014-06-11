@@ -9,6 +9,7 @@ from cookielib import CookieJar
 from urlparse import urlparse
 import os
 import sys
+from .util import make_fields
 
 
 class TransportError(Exception):
@@ -164,8 +165,18 @@ class Abstract(BaseObject):
     def reason_for_talk(self):
         return self.__data['reasonForTalk']
 
-    def select_field(self, field):
-        return reduce(getattr_maybelist, field, self)
+    def select_field(self, field, fold=False):
+        if type(field) == str or type(field) == unicode:
+            field = make_fields(field)
+        val = reduce(getattr_maybelist, field, self)
+
+        if fold:
+            if len(val) == 0:
+                return None
+            if len(val) == 1:
+                return val[0]
+
+        return val
 
     @classmethod
     def from_data(cls, data):
