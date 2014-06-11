@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from gca.core import Abstract
+
+import sys
+import argparse
+import codecs
+
+
+def make_filter(string):
+    x = string.split('=')
+    assert(len(x) == 2)
+    field = x[0].strip()
+    fl = x[1].strip()
+
+    return lambda abstract: abstract.select_field(field, fold=True) == fl
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='GCA Filter - filter list of abstract by files')
+    parser.add_argument('file', type=str, default='-')
+    parser.add_argument('filter', type=str, nargs='+', help='filter to apply to each abstract')
+    args = parser.parse_args()
+
+    fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
+    abstracts = Abstract.from_data(fd.read())
+    fd.close()
+
+    filter_list = [make_filter(f) for f in args.filter]
+
+    for f in filter_list:
+        abstracts = filter(f, abstracts)
+
+    data = Abstract.to_json(abstracts)
+    sys.stdout.write(data.encode('utf-8'))
