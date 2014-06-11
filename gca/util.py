@@ -43,18 +43,23 @@ def getattr_maybelist(obj, sel):
         return [sel[v] for iv, v in enumerate(val) if sel(v, iv)]
 
 
+def find_epitheton(string, start, end):
+    x = string.rfind(start)
+    y = string.rfind(end)
+    if x == -1 or y == -1:
+        return None
+    epit = string[x+1:y]
+    name = string[:x]
+    return name, epit
+
+
 def make_selector(string):
-    x = string.rfind('[')
-    y = string.rfind(']')
-    if x != -1 and y != -1:
-        idx = int(string[x+1:y])
-        return ArraySelector(string[:x], idx)
-    x = string.rfind('{')
-    y = string.rfind('}')
-    if x != -1 and y != -1:
-        inner = string[x+1:y]
-        name = string[:x]
-        return ListSelector(name, inner)
+    x = find_epitheton(string, '[', ']')
+    if x is not None:
+        return ArraySelector(x[0], int(x[1]))
+    x = find_epitheton(string, '{', '}')
+    if x is not None:
+        return ListSelector(x[0], x[1])
     return Selector(string)
 
 
