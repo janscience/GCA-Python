@@ -13,12 +13,15 @@ def mk_tex_text(text, is_body=False):
     if not is_body:
         text = re.sub(ur'(?<!(?<!\\)\\)(_)', ur"\_", text)
 
+    text = text.replace('', '')
+
     return text
 
 
 basic_tempate = r"""
 <%!
 from gca.tex import mk_tex_text
+import os
 %>
 
 %%!TEX TS-program = lualatex
@@ -47,6 +50,12 @@ final%%
 
 \usepackage{mathtools}
 \usepackage{amssymb}
+
+% if figures is not None:
+\usepackage{caption}
+\usepackage{graphicx}
+\graphicspath{ {${figures}/} }
+%endif
 
 \usepackage{needspace}
 
@@ -88,6 +97,9 @@ final%%
     \normalsize
 
     ${abstract.text}
+    %if len(abstract.figures) and figures_path is not None:
+        ${mk_figure(abstract.figures[0])}
+    %endif
     %if abstract.acknowledgements:
         ${mk_acknowledgements(abstract.acknowledgements)}
     %endif
@@ -137,6 +149,16 @@ ${mk_tex_text(acknowledgements)}\
 %endfor
 \end{list}
 \par\renewcommand{\baselinestretch}{1.0}\normalsize
+</%def>
+
+<%def name="mk_figure(figure)">
+\vspace{1mm}\makebox[\textwidth][c]{\begin{minipage}[c]{0.9\linewidth}
+    \centering
+    \includegraphics[width=0.50\textwidth]{${figure.uuid}}
+    \captionof*{figure}{\small ${mk_tex_text(figure.caption)}}
+\end{minipage}
+\vspace{1em}
+}
 </%def>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
