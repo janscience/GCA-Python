@@ -56,8 +56,6 @@ if __name__ == '__main__':
     txt = text_replace_all(txt, text_replacements['input'])
     data = json.loads(txt)
     abstracts = [sanitize_abstract(Abstract(abstract), text_replacements) for abstract in data]
-    abstracts = filter(lambda x: x.state == 'Submitted', abstracts)
-    abstracts = sorted(abstracts, key=lambda a: a.authors[0].last_name)
     sys.stderr.write('[I] %d abstracts. Generating tex\n' % len(abstracts))
 
     tex_template = Template(basic_tempate, output_encoding='utf-8')
