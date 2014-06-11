@@ -20,6 +20,18 @@ class ArraySelector(Selector):
         return idx == self.index
 
 
+class ListSelector(Selector):
+    def __init__(self, name, inner):
+        super(ListSelector, self).__init__(name)
+        self.lst = [x.strip() for x in reversed(inner.split(';'))]
+
+    def __getitem__(self, item):
+        if not item:
+            return item
+        idx = [i for i, n in enumerate(self.lst) if item.startswith(n)]
+        return str(idx[0]) if len(idx) else ""
+
+
 def getattr_maybelist(obj, sel):
     if obj is None:
         return []
@@ -37,6 +49,12 @@ def make_selector(string):
     if x != -1 and y != -1:
         idx = int(string[x+1:y])
         return ArraySelector(string[:x], idx)
+    x = string.rfind('{')
+    y = string.rfind('}')
+    if x != -1 and y != -1:
+        inner = string[x+1:y]
+        name = string[:x]
+        return ListSelector(name, inner)
     return Selector(string)
 
 
