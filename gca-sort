@@ -21,7 +21,7 @@ def get_sorter(field):
 
     def sort_fn(abstract):
         val = abstract.select_field(fields)
-        return val[0].strip() if len(val) else None
+        return val[0].strip() if len(val) and val[0] is not None else None
 
     return {'fn': sort_fn, 'reverse': reverse}
 
