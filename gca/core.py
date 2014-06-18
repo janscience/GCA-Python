@@ -107,69 +107,68 @@ class Figure(Entity):
 class Abstract(Entity):
     def __init__(self, data):
         super(Abstract, self).__init__(data)
-        self.__data = data
 
     @property
     def title(self):
-        return self.__data['title']
+        return self._data['title']
 
     @property
     def text(self):
-        return self.__data['text']
+        return self._data['text']
 
     @text.setter
     def text(self, value):
-        self.__data['text'] = value
+        self._data['text'] = value
 
     @property
     def state(self):
-        return self.__data['state']
+        return self._data['state']
 
     @property
     def authors(self):
-        return [Author(a) for a in self.__data['authors']]
+        return [Author(a) for a in self._data['authors']]
 
     @property
     def affiliations(self):
-        return [Affiliation(a) for a in self.__data['affiliations']]
+        return [Affiliation(a) for a in self._data['affiliations']]
 
     @property
     def acknowledgements(self):
-        return self.__data['acknowledgements']
+        return self._data['acknowledgements']
 
     @property
     def references(self):
-        return [Reference(r) for r in self.__data['references']]
+        return [Reference(r) for r in self._data['references']]
 
     @property
     def figures(self):
-        return [Figure(f) for f in self.__data['figures']]
+        return [Figure(f) for f in self._data['figures']]
 
     @property
     def log(self):
-        log_data = self.__data['stateLog']
+        log_data = self._data['stateLog']
         if type(log_data) != list:
             return None
         return [LogEntry(e) for e in log_data]
 
     @property
     def owners(self):
-        owner_data = self.__data['owners']
+        owner_data = self._data['owners']
         if type(owner_data) != list:
             return None
         return [Owner(o) for o in owner_data]
 
     @property
     def topic(self):
-        return self.__data['topic']
+        return self._data['topic']
 
     @property
     def is_talk(self):
-        return self.__data['isTalk']
+        return self._data['isTalk']
 
     @property
     def reason_for_talk(self):
-        return self.__data['reasonForTalk']
+        return self._data['reasonForTalk']
 
     def select_field(self, field, fold=False):
         if type(field) == str or type(field) == unicode:
@@ -190,7 +189,7 @@ class Abstract(Entity):
         return [Abstract(a) for a in js]
 
     def to_data(self):
-        return self.__data
+        return self._data
 
     @staticmethod
     def to_json(abstracts):
