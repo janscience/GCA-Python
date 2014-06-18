@@ -186,9 +186,17 @@ class Abstract(Entity):
     def authors(self):
         return [Author(a) for a in self._data['authors']]
 
+    @authors.setter
+    def authors(self, value):
+        self._data['authors'] = [a.raw_data for a in value]
+
     @property
     def affiliations(self):
         return [Affiliation(a) for a in self._data['affiliations']]
+
+    @affiliations.setter
+    def affiliations(self, value):
+        self._data['affiliations'] = [a.raw_data for a in value]
 
     @property
     def acknowledgements(self):
@@ -201,6 +209,10 @@ class Abstract(Entity):
     @property
     def references(self):
         return [Reference(r) for r in self._data['references']]
+
+    @references.setter
+    def references(self, value):
+        self._data['references'] = [r.raw_data for r in value]
 
     @property
     def figures(self):
