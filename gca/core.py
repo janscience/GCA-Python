@@ -97,13 +97,25 @@ class Author(BaseObject):
     def first_name(self):
         return self._data['firstName']
 
+    @first_name.setter
+    def first_name(self, value):
+        self._data['firstName'] = value
+
     @property
     def middle_name(self):
         return self._data['middleName']
 
+    @middle_name.setter
+    def middle_name(self, value):
+        self._data['middleName'] = value
+
     @property
     def last_name(self):
         return self._data['lastName']
+
+    @last_name.setter
+    def last_name(self, value):
+        self._data['lastName'] = value
 
     @property
     def affiliations(self):
