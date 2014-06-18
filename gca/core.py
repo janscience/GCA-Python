@@ -26,12 +26,17 @@ class BaseObject(object):
         self._data = data
 
     @property
-    def uuid(self):
-        return self._data['uuid']
-
-    @property
     def raw_data(self):
         return self._data
+
+
+class Entity(BaseObject):
+    def __init__(self, data):
+        super(Entity, self).__init__(data)
+
+    @property
+    def uuid(self):
+        return self._data['uuid']
 
 
 class Affiliation(BaseObject):
@@ -89,7 +94,8 @@ class Reference(BaseObject):
         return self._data['text']
 
 
-class Figure(BaseObject):
+
+class Figure(Entity):
     def __init__(self, data):
         super(Figure, self).__init__(data)
 
@@ -98,7 +104,7 @@ class Figure(BaseObject):
         return self._data['caption']
 
 
-class Abstract(BaseObject):
+class Abstract(Entity):
     def __init__(self, data):
         super(Abstract, self).__init__(data)
         self.__data = data
@@ -192,7 +198,7 @@ class Abstract(BaseObject):
         return js
 
 
-class Owner(BaseObject):
+class Owner(Entity):
     def __init__(self, data):
         super(Owner, self).__init__(data)
 
