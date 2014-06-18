@@ -46,6 +46,38 @@ class Affiliation(BaseObject):
     def __init__(self, data=None):
         super(Affiliation, self).__init__(data)
 
+    @property
+    def department(self):
+        return self._data['department']
+
+    @department.setter
+    def department(self, value):
+        self._data['department'] = value
+
+    @property
+    def section(self):
+        return self._data['section']
+
+    @section.setter
+    def section(self, value):
+        self._data['section'] = value
+
+    @property
+    def address(self):
+        return self._data['address']
+
+    @address.setter
+    def address(self, value):
+        self._data['address'] = value
+
+    @property
+    def country(self):
+        return self._data['country']
+
+    @country.setter
+    def country(self, value):
+        self._data['country'] = value
+
     def format_affiliation(self):
         department = self._data['department']
         section = self._data['section']
