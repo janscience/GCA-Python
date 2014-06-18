@@ -7,6 +7,7 @@ import urllib2
 import urllib
 from cookielib import CookieJar
 from urlparse import urlparse
+from collections import defaultdict
 import os
 import sys
 from .util import make_fields
@@ -23,7 +24,9 @@ class TransportError(Exception):
 
 class BaseObject(object):
     def __init__(self, data):
-        self._data = data
+        def none_factory():
+            return None
+        self._data = data if data is not None else defaultdict(none_factory)
 
     @property
     def raw_data(self):
@@ -40,7 +43,7 @@ class Entity(BaseObject):
 
 
 class Affiliation(BaseObject):
-    def __init__(self, data):
+    def __init__(self, data=None):
         super(Affiliation, self).__init__(data)
 
     def format_affiliation(self):
@@ -55,7 +58,7 @@ class Affiliation(BaseObject):
 
 
 class Author(BaseObject):
-    def __init__(self, data):
+    def __init__(self, data=None):
         super(Author, self).__init__(data)
 
     @property
@@ -86,7 +89,7 @@ class Author(BaseObject):
 
 
 class Reference(BaseObject):
-    def __init__(self, data):
+    def __init__(self, data=None):
         super(Reference, self).__init__(data)
 
     @property
@@ -99,7 +102,7 @@ class Reference(BaseObject):
 
 
 class Figure(Entity):
-    def __init__(self, data):
+    def __init__(self, data=None):
         super(Figure, self).__init__(data)
 
     @property
@@ -108,7 +111,7 @@ class Figure(Entity):
 
 
 class Abstract(Entity):
-    def __init__(self, data):
+    def __init__(self, data=None):
         super(Abstract, self).__init__(data)
 
     @property
