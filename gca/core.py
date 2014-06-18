@@ -93,6 +93,9 @@ class Reference(BaseObject):
     def text(self):
         return self._data['text']
 
+    @text.setter
+    def text(self, value):
+        self._data['text'] = value
 
 
 class Figure(Entity):
@@ -112,6 +115,10 @@ class Abstract(Entity):
     def title(self):
         return self._data['title']
 
+    @title.setter
+    def title(self, value):
+        self._data['title'] = value
+
     @property
     def text(self):
         return self._data['text']
@@ -124,6 +131,10 @@ class Abstract(Entity):
     def state(self):
         return self._data['state']
 
+    @state.setter
+    def state(self, value):
+        self._data['state'] = value
+
     @property
     def authors(self):
         return [Author(a) for a in self._data['authors']]
@@ -135,6 +146,10 @@ class Abstract(Entity):
     @property
     def acknowledgements(self):
         return self._data['acknowledgements']
+
+    @acknowledgements.setter
+    def acknowledgements(self, value):
+        self._data['acknowledgements'] = value
 
     @property
     def references(self):
@@ -161,6 +176,10 @@ class Abstract(Entity):
     @property
     def topic(self):
         return self._data['topic']
+
+    @topic.setter
+    def topic(self, value):
+        self._data['topic'] = value
 
     @property
     def is_talk(self):
