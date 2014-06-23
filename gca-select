@@ -17,7 +17,7 @@ import itertools as it
 def maybe_group(separator, lst):
     if not separator or not lst:
         return lst
-    return [separator.join(lst)]
+    return [separator.join(map(unicode, lst))]
 
 
 if __name__ == '__main__':
@@ -45,6 +45,6 @@ if __name__ == '__main__':
 
     val = do_chain(p_fld(do_chain(p_mlt(a.select_field(f)) for f in fields)) for a in abstracts)
     val = filter(lambda a: a is not None, val)
-    data = delimiter.join(val)
+    data = delimiter.join(map(unicode, val))
     sys.stdout.write(data.encode('utf-8'))
     sys.stdout.write(delimiter.encode('utf-8'))
