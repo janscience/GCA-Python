@@ -39,6 +39,8 @@ def getattr_maybelist(obj, sel):
         return [x for o in obj for x in getattr_maybelist(o, sel)]
     else:
         x = getattr(obj, sel.name)
+        if x is None:
+            return []
         val = x if type(x) == list else [x]
         return [sel[v] for iv, v in enumerate(val) if sel(v, iv)]
 
