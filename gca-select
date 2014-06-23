@@ -23,9 +23,14 @@ def maybe_group(separator, lst):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Selector - select field values')
     parser.add_argument('--group-multiple', type=str, dest='g_multiple', default=None)
+    parser.add_argument('--group-fields', type=str, dest='g_fields', default=None)
     parser.add_argument('file', type=str, default='-')
     parser.add_argument('fields', type=str, nargs='+', help='fields to select')
     args = parser.parse_args()
+
+    if args.g_fields and not args.g_multiple:
+        sys.stderr.write("%s: Selecting --group-fields requires --group-multiple\n" % sys.argv[0])
+        sys.exit(-1)
 
     delimiter = '\n'
 
@@ -34,8 +39,11 @@ if __name__ == '__main__':
     abstracts = Abstract.from_data(fd.read())
 
     p_mlt = partial(maybe_group, args.g_multiple)
+    p_fld = partial(maybe_group, args.g_fields)
 
-    val = it.chain.from_iterable(p_mlt(a.select_field(f)) for a in abstracts for f in fields)
+    do_chain = it.chain.from_iterable
+
+    val = do_chain(p_fld(do_chain(p_mlt(a.select_field(f)) for f in fields)) for a in abstracts)
     val = filter(lambda a: a is not None, val)
     data = delimiter.join(val)
     sys.stdout.write(data.encode('utf-8'))
