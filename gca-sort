@@ -11,6 +11,13 @@ import codecs
 import sys
 
 
+def sanitize_field(x):
+    if type(x) == str:
+        return x.strip()
+
+    return x
+
+
 def get_sorter(field):
     reverse = True
     if field.startswith('+'):
@@ -20,8 +27,8 @@ def get_sorter(field):
     fields = make_fields(field)
 
     def sort_fn(abstract):
-        val = abstract.select_field(fields)
-        return val[0].strip() if len(val) and val[0] is not None else None
+        val = abstract.select_field(fields, fold=True)
+        return sanitize_field(val)
 
     return {'fn': sort_fn, 'reverse': reverse}
 
