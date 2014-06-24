@@ -14,11 +14,13 @@ import sys
 import itertools as it
 
 
-def maybe_group(separator, lst):
-    if not separator or not lst:
+def maybe_group(separator, print_empty, lst):
+    if not separator:
         return lst
-    return [separator.join(map(unicode, lst))]
-
+    if not lst:
+        return [''] if print_empty else lst
+    x = map(unicode, lst)
+    return [separator.join(x)] if any(x) else []
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Selector - select field values')
@@ -38,8 +40,8 @@ if __name__ == '__main__':
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
     abstracts = Abstract.from_data(fd.read())
 
-    p_mlt = partial(maybe_group, args.g_multiple)
-    p_fld = partial(maybe_group, args.g_fields)
+    p_mlt = partial(maybe_group, args.g_multiple, True)
+    p_fld = partial(maybe_group, args.g_fields, False)
 
     do_chain = it.chain.from_iterable
 
