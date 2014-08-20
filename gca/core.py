@@ -248,6 +248,14 @@ class Abstract(Entity):
     def reason_for_talk(self):
         return self._data['reasonForTalk']
 
+    @property
+    def sort_id(self):
+        return self._data['sortId']
+
+    @sort_id.setter
+    def sort_id(self, value):
+        self._data['sortId'] = value
+
     def select_field(self, field, fold=False):
         if type(field) == str or type(field) == unicode:
             field = make_fields(field)
