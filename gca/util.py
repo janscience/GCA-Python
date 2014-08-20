@@ -7,7 +7,7 @@ class Selector(object):
     def __getitem__(self, item):
         return item
 
-    def __call__(self, name, idx):
+    def __call__(self, name, idx, length):
         return True
 
 
@@ -16,8 +16,11 @@ class ArraySelector(Selector):
         super(ArraySelector, self).__init__(name)
         self.index = index
 
-    def __call__(self, name, idx):
-        return idx == self.index
+    def __call__(self, name, idx, length):
+        index = self.index
+        if index < 0:
+            index += length
+        return idx == index
 
 
 class ListSelector(Selector):
@@ -42,7 +45,7 @@ def getattr_maybelist(obj, sel):
         if x is None:
             return []
         val = x if type(x) == list else [x]
-        return [sel[v] for iv, v in enumerate(val) if sel(v, iv)]
+        return [sel[v] for iv, v in enumerate(val) if sel(v, iv, len(val))]
 
 
 def find_epitheton(string, start, end):
