@@ -23,6 +23,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Filter - filter list of abstract by files')
     parser.add_argument('file', type=str, default='-')
     parser.add_argument('filter', type=str, nargs='+', help='filter to apply to each abstract')
+    parser.add_argument('--start-at', dest='P', default=None, type=int, help='start at abstract number')
+    parser.add_argument('--max-num', dest='N', default=None, type=int, help='maximum number of abstracts to take')
     args = parser.parse_args()
 
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
@@ -33,6 +35,12 @@ if __name__ == '__main__':
 
     for f in filter_list:
         abstracts = filter(f, abstracts)
+
+    if args.P is not None:
+        abstracts = abstracts[args.P-1:]
+
+    if args.N is not None:
+        abstracts = abstracts[:args.N]
 
     data = Abstract.to_json(abstracts)
     sys.stdout.write(data.encode('utf-8'))
