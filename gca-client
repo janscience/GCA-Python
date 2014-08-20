@@ -38,6 +38,11 @@ if __name__ == '__main__':
     parser_abs.add_argument('uuid', type=str, help='abstract uuid to fetch log for')
     parser_abs.set_defaults(cmd='state_log')
 
+    parser_abs = subparsers.add_parser("put", help='put abstracts')
+    parser_abs.add_argument('conference', type=str, help='for which conference')
+    parser_abs.add_argument('abstract', type=str, help='abstract to upload')
+    parser_abs.set_defaults(cmd='put')
+
     args = parser.parse_args()
 
     auth = NetRCAuth()
@@ -60,3 +65,14 @@ if __name__ == '__main__':
     elif args.cmd == 'state_log':
         log = session.get_state_log(args.uuid, raw=True)
         write_json(log)
+    elif args.cmd == 'put':
+        import json
+        import codecs
+        conference = args.conference
+        fd = codecs.open(args.abstract, 'r', encoding='utf-8') if args.abstract != '-' else sys.stdin
+        data = json.load(fd)
+        if isinstance(data, list):
+            res = [session.upload_abstract(a, conference, raw=True) for a in data]
+        else:
+            res = session.upload_abstract(data, conference, raw=True)
+        write_json(res)
