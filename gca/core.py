@@ -387,6 +387,25 @@ class Session(object):
         return fn
 
     @authenticated
+    def upload_abstract(self, abstract, conference, raw=None):
+        #for now only support POST (create), but we should do PUT (update) too
+        if isinstance(abstract, Abstract):
+            abstract = abstract.to_data()
+            if raw is None:
+                raw = False
+
+        if 'conference' in abstract:
+            del abstract['conference']
+        if 'uuid' in abstract and not len(abstract['uuid']):
+            del abstract['uuid']
+
+        url = "%s/api/conferences/%s/abstracts" % (self.url, conference)
+        data = json.dumps(abstract)
+        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+        js = self._fetch(req)
+        return js if raw else Abstract(js)
+
+    @authenticated
     def get_owners(self, uuid_or_url, otype='abstracts', raw=False):
         url = self._build_url(uuid_or_url, 'owners', otype=otype)
         data = self._fetch(url)
@@ -423,7 +442,7 @@ class Session(object):
     def _fetch(self, url):
         url_opener = self.__url_opener
         resp = url_opener.open(url)
-        if resp.getcode() != 200:
+        if resp.getcode() != 200 and resp.getcode() != 201:
             raise TransportError(resp.getcode(), "Could not fetch data")
         data = resp.read()
         text = data.decode('utf-8')
