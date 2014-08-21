@@ -90,6 +90,11 @@ class Conference(Entity):
         group = filter(lambda x: x.prefix == gid, groups)[0]
         return "%s %d" % (group.brief, aid)
 
+    @staticmethod
+    def from_data(data):
+        js = json.loads(data)
+        return Conference(js)
+
 
 class Affiliation(BaseObject):
     def __init__(self, data=None):
