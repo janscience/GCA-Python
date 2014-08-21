@@ -256,6 +256,14 @@ class Abstract(Entity):
     def sort_id(self, value):
         self._data['sortId'] = value
 
+    @property
+    def alt_id(self):
+        return self._data['altId']
+
+    @alt_id.setter
+    def alt_id(self, value):
+        self._data['altId'] = value
+
     def select_field(self, field, fold=False):
         if type(field) == str or type(field) == unicode:
             field = make_fields(field)
