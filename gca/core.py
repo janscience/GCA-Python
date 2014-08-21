@@ -42,6 +42,55 @@ class Entity(BaseObject):
         return self._data['uuid']
 
 
+class Group(Entity):
+    def __init__(self, data=None):
+        super(Group, self).__init__(data)
+
+    @property
+    def name(self):
+        return self._data['name']
+
+    @property
+    def prefix(self):
+        return self._data['prefix']
+
+    @property
+    def brief(self):
+        return self._data['short']
+
+
+class Conference(Entity):
+    def __init__(self, data=None):
+        super(Conference, self).__init__(data)
+
+    @property
+    def name(self):
+        return self._data['name']
+
+    @property
+    def brief(self):
+        return self._data['short']
+
+    @property
+    def topics(self):
+        return self._data['topics']
+
+    @property
+    def is_open(self):
+        return self._data['isOpen']
+
+    @property
+    def is_published(self):
+        return self._data['isPublished']
+
+    def sort_id_to_string(self, sort_id):
+        gid = sort_id >> 16
+        aid = sort_id & 0x0000FFFF
+        groups = [Group(gd) for gd in self._data['groups']]
+        group = filter(lambda x: x.prefix == gid, groups)
+        return "%s %d" % (group.brief, aid)
+
+
 class Affiliation(BaseObject):
     def __init__(self, data=None):
         super(Affiliation, self).__init__(data)
@@ -378,10 +427,10 @@ class Session(object):
         all_abstracts = [Abstract(abstract) for abstract in data] if not raw else data
         return all_abstracts
 
-    def get_conference(self, conference):
+    def get_conference(self, conference, raw=False):
         url = "%s/api/conferences/%s" % (self.url, conference)
         data = self._fetch(url)
-        return data
+        return data if raw else Conference(data)
 
     def get_figure_image(self, uuid, add_ext=True, path=None):
         url = "%s/api/figures/%s/image" % (self.url, uuid)
