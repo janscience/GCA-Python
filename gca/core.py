@@ -175,6 +175,10 @@ class Author(BaseObject):
     def affiliations(self):
         return self._data['affiliations']
 
+    @property
+    def full_name(self):
+        return self.format_name()
+
     def format_name(self):
         d = self._data
         middle = d['middleName'] + u' ' if d['middleName'] else u""
