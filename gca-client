@@ -43,6 +43,10 @@ if __name__ == '__main__':
     parser_abs.add_argument('abstract', type=str, help='abstract to upload')
     parser_abs.set_defaults(cmd='put')
 
+    parser_abs = subparsers.add_parser("conference", help='fetch conference info')
+    parser_abs.add_argument('conference', type=str, help='conf to fetch')
+    parser_abs.set_defaults(cmd='conf')
+
     args = parser.parse_args()
 
     auth = NetRCAuth()
@@ -76,3 +80,6 @@ if __name__ == '__main__':
         else:
             res = session.upload_abstract(data, conference, raw=True)
         write_json(res)
+    elif args.cmd == 'conf':
+        conf = session.get_conference(args.conference, raw=True)
+        write_json(conf)
