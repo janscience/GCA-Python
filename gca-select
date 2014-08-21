@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from gca.core import Abstract
+from gca.core import Conference
 from gca.util import make_fields
 
 from functools import partial
@@ -26,6 +27,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Selector - select field values')
     parser.add_argument('--group-multiple', type=str, dest='g_multiple', default=None)
     parser.add_argument('--group-fields', type=str, dest='g_fields', default=None)
+    parser.add_argument('--conference', type=str, dest='conf', default=None)
     parser.add_argument('file', type=str, default='-')
     parser.add_argument('fields', type=str, nargs='+', help='fields to select')
     args = parser.parse_args()
@@ -34,11 +36,16 @@ if __name__ == '__main__':
         sys.stderr.write("%s: Selecting --group-fields requires --group-multiple\n" % sys.argv[0])
         sys.exit(-1)
 
+    conf = None
+    if args.conf is not None:
+        fd = codecs.open(args.conf, 'r', encoding='utf-8')
+        conf = Conference.from_data(fd.read())
+
     delimiter = '\n'
 
     fields = [make_fields(field) for field in args.fields]
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
-    abstracts = Abstract.from_data(fd.read())
+    abstracts = Abstract.from_data(fd.read(), conf)
 
     p_mlt = partial(maybe_group, args.g_multiple, True)
     p_fld = partial(maybe_group, args.g_fields, False)
