@@ -87,7 +87,7 @@ class Conference(Entity):
         gid = sort_id >> 16
         aid = sort_id & 0x0000FFFF
         groups = [Group(gd) for gd in self._data['groups']]
-        group = filter(lambda x: x.prefix == gid, groups)
+        group = filter(lambda x: x.prefix == gid, groups)[0]
         return "%s %d" % (group.brief, aid)
 
 
