@@ -213,8 +213,9 @@ class Figure(Entity):
 
 
 class Abstract(Entity):
-    def __init__(self, data=None):
+    def __init__(self, data=None, conference=None):
         super(Abstract, self).__init__(data)
+        self.conference = conference
 
     @property
     def title(self):
@@ -336,9 +337,9 @@ class Abstract(Entity):
         return val
 
     @classmethod
-    def from_data(cls, data):
+    def from_data(cls, data, conference=None):
         js = json.loads(data)
-        return [Abstract(a) for a in js]
+        return [Abstract(a, conference) for a in js]
 
     def to_data(self):
         return self._data
