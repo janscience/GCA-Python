@@ -323,6 +323,13 @@ class Abstract(Entity):
     def alt_id(self, value):
         self._data['altId'] = value
 
+    @property
+    def poster_id(self):
+        sid = self.sort_id
+        if self.conference is not None:
+            return self.conference.sort_id_to_string(sid)
+        return str(sid)
+
     def select_field(self, field, fold=False):
         if type(field) == str or type(field) == unicode:
             field = make_fields(field)
