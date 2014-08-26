@@ -47,6 +47,11 @@ if __name__ == '__main__':
     parser_abs.add_argument('conference', type=str, help='conf to fetch')
     parser_abs.set_defaults(cmd='conf')
 
+    parser_abs = subparsers.add_parser("patch", help='patch abstracts')
+    parser_abs.add_argument('file', type=str, default='-', help="json file to read abstracts from")
+    parser_abs.add_argument('fields', type=str, nargs='+', help='fields to patch online in the abstract')
+    parser_abs.set_defaults(cmd='patch')
+
     args = parser.parse_args()
 
     auth = NetRCAuth()
@@ -83,3 +88,10 @@ if __name__ == '__main__':
     elif args.cmd == 'conf':
         conf = session.get_conference(args.conference, raw=True)
         write_json(conf)
+    elif args.cmd == 'patch':
+        import codecs
+        import json
+        fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
+        data = json.load(fd)
+        abstracts = [session.patch_abstract(a, args.fields, raw=True) for a in data]
+        write_json(abstracts)
