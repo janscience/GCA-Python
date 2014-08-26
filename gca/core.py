@@ -488,6 +488,21 @@ class Session(object):
         return js if raw else Abstract(js)
 
     @authenticated
+    def patch_abstract(self, abstract, fields, raw=None):
+        if isinstance(abstract, Abstract):
+            abstract = abstract.to_data()
+            if raw is None:
+                raw = False
+        uuid = abstract["uuid"]
+        url = "%s/api/abstracts/%s" % (self.url, uuid)
+        patches = [{"op": "add", "path": "/%s" % f, "value": abstract[f]} for f in fields]
+        data = json.dumps(patches)
+        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+        req.get_method = lambda: 'PATCH'  # monkey see, monkey do
+        js = self._fetch(req)
+        return js if raw else Abstract(js)
+
+    @authenticated
     def get_owners(self, uuid_or_url, otype='abstracts', raw=False):
         url = self._build_url(uuid_or_url, 'owners', otype=otype)
         data = self._fetch(url)
