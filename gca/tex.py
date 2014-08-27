@@ -89,7 +89,7 @@ final%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <%def name="mk_abstract(idx, abstract, include_figures)">
-    \subsection*{\textmd{\sffamily [${idx}]} \hspace{1mm} ${mk_tex_text(abstract.title)} }
+    \subsection*{\textmd{\sffamily [${abstract.poster_id}]} \hspace{1mm} ${mk_tex_text(abstract.title)} }
     \noindent ${mk_authors(abstract.authors)}\\*[0.5ex]
     \small
     ${mk_affiliations(abstract.affiliations)}
@@ -97,6 +97,11 @@ final%%
     \normalsize
 
     ${abstract.text}
+    %if abstract.alt_id > 0 and abstract.conference is not None:
+
+
+        \textbf{See also Poster}: ${abstract.conference.sort_id_to_string(abstract.alt_id)}
+    %endif
     %if len(abstract.figures) and include_figures:
         ${mk_figure(abstract.figures[0])}
     %endif
