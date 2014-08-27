@@ -168,7 +168,7 @@ ${mk_tex_text(acknowledgements)}\
 \renewcommand{\baselinestretch}{0.9}\footnotesize \needspace{3\baselineskip}\textbf{References}\nopagebreak
 \begin{list}{}{\leftmargin=1.5em \listparindent=0pt \rightmargin=0pt \topsep=0.5ex \parskip=0pt \partopsep=0pt \itemsep=0pt \parsep=0pt}
 %for idx, ref in enumerate(references):
-  \item[${idx+1}] ${mk_tex_text(ref.text)}
+  \item[${idx+1}] ${mk_tex_text(ref.display_text)} ${mk_doi(ref)}
 %endfor
 \end{list}
 \par\renewcommand{\baselinestretch}{1.0}\normalsize
@@ -182,6 +182,12 @@ ${mk_tex_text(acknowledgements)}\
 \end{minipage}
 \vspace{1em}
 }
+</%def>
+
+<%def name="mk_doi(ref)">
+%if ref.doi:
+\href{${ref.doi_link}}{${mk_tex_text(ref.doi)}}\
+%endif
 </%def>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
