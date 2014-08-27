@@ -324,6 +324,14 @@ class Abstract(Entity):
         self._data['altId'] = value
 
     @property
+    def doi(self):
+        return self._data['doi']
+
+    @doi.setter
+    def doi(self, value):
+        self._data['doi'] = value
+
+    @property
     def poster_id(self):
         sid = self.sort_id
         if self.conference is not None:
