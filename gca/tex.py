@@ -70,6 +70,7 @@ final%%
 \setlength{\textheight}{185mm}
 \setlength{\footskip}{20pt}
 
+\usepackage{hyperref}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -93,6 +94,9 @@ final%%
     \noindent ${mk_authors(abstract.authors)}\\*[0.5ex]
     \small
     ${mk_affiliations(abstract.affiliations)}
+    %if abstract.doi:
+    doi: \href{http://dx.doi.org/${abstract.doi}}{${abstract.doi}}
+    %endif
     %%\normalsize \nopagebreak\\*[-2.0ex]
     \normalsize
 
