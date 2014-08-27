@@ -215,6 +215,35 @@ class Reference(BaseObject):
     def text(self, value):
         self._data['text'] = value
 
+    @property
+    def link(self):
+        return self._data['link']
+
+    @link.setter
+    def link(self, value):
+        self._data['link'] = value
+
+    @property
+    def doi(self):
+        return self._data['doi']
+
+    @doi.setter
+    def doi(self, value):
+        self._data['doi'] = value
+
+    @property
+    def doi_link(self):
+        doi = self.doi
+        return doi if doi.startswith('http') else "http://dx.doi.org/%s" % doi
+
+    @property
+    def url(self):
+        return self.link or self.doi_link
+
+    @property
+    def display_text(self):
+        return self.text or self.link
+
 
 class Figure(Entity):
     def __init__(self, data=None):
