@@ -72,6 +72,10 @@ final%%
 
 \usepackage{hyperref}
 
+\usepackage{multind}
+\makeindex{pages}
+\makeindex{posterid}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
@@ -89,6 +93,15 @@ final%%
 % endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% appendix
+\backmatter
+\chapter{Index}
+\sffamily\footnotesize
+\chapter{Index}
+\printindex{pages}{Authors}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 <%def name="mk_abstract(idx, abstract, include_figures)">
     \subsection*{\textmd{\sffamily [${abstract.poster_id}]} \hspace{1mm} ${mk_tex_text(abstract.title)} }
     \noindent ${mk_authors(abstract.authors)}\\*[0.5ex]
@@ -133,7 +146,7 @@ final%%
      aff = author.format_affiliation()
      epi = '$^{%s}$' % aff if aff else ''
   %>
-  ${author.format_name()}${epi}${sep}\
+  ${author.format_name()}${epi}${sep}\index{pages}{${author.index_name}}\
 % endfor
 </%def>
 
