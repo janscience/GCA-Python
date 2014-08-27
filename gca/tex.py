@@ -9,6 +9,7 @@ def mk_tex_text(text, is_body=False):
 
     text = re.sub(ur'(?<!(?<!\\)\\)(&)', ur"\&", text)
     text = re.sub(ur'(?<!(?<!\\)\\)(#)', ur"\#", text)
+    text = re.sub(ur'(?<!(?<!\\)\\)(%)', ur"\%", text)
 
     if not is_body:
         text = re.sub(ur'(?<!(?<!\\)\\)(_)', ur"\_", text)
