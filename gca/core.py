@@ -317,7 +317,7 @@ class Abstract(Entity):
 
     @property
     def alt_id(self):
-        return self._data['altId']
+        return self._data['altId'] if 'altId' in self._data else 0
 
     @alt_id.setter
     def alt_id(self, value):
