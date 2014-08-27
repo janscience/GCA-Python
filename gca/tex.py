@@ -84,11 +84,11 @@ final%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % for idx, abstract in enumerate(abstracts):
-    ${mk_abstract(idx, abstract)}
+    ${mk_abstract(idx, abstract, figures is not None)}
 % endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<%def name="mk_abstract(idx, abstract)">
+<%def name="mk_abstract(idx, abstract, include_figures)">
     \subsection*{\textmd{\sffamily [${idx}]} \hspace{1mm} ${mk_tex_text(abstract.title)} }
     \noindent ${mk_authors(abstract.authors)}\\*[0.5ex]
     \small
@@ -97,7 +97,7 @@ final%%
     \normalsize
 
     ${abstract.text}
-    %if len(abstract.figures) and figures_path is not None:
+    %if len(abstract.figures) and include_figures:
         ${mk_figure(abstract.figures[0])}
     %endif
     %if abstract.acknowledgements:
