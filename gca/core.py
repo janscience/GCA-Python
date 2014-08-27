@@ -189,6 +189,19 @@ class Author(BaseObject):
         af_corrected = [str(x + 1) for x in sorted(af)]
         return ', '.join(af_corrected)
 
+    @property
+    def index_name(self):
+        return "%s %s%s" % (self.last_name,
+                            self.format_initials(self.first_name),
+                            self.format_initials(self.middle_name))
+
+    @staticmethod
+    def format_initials(name):
+        if not name:
+            return ""
+        comps = name.split(' ')
+        return ''.join([a[0] for a in comps])
+
 
 class Reference(BaseObject):
     def __init__(self, data=None):
