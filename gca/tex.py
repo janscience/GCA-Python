@@ -126,7 +126,7 @@ cur_state = check_cur_state(None, None)
     \cleardoublepage \chapter{${new_chapter}} \addtocounter{chapterthumb}{1} \newpage
     %endif
     %if new_section is not None:
-    \section{${new_section}}
+    \section*{${new_section}}
     %endif
 
     ${mk_abstract(idx, abstract, figures is not None)}
