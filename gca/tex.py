@@ -129,7 +129,10 @@ cur_state = check_cur_state(None, None)
     \section*{${new_section}}
     %endif
 
-    ${mk_abstract(idx, abstract, figures is not None)}
+    ${mk_abstract(idx, abstract, figures is not None, show_meta)}
+    %if single_page:
+    \clearpage
+    %endif
 % endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +148,7 @@ cur_state = check_cur_state(None, None)
 %endif
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<%def name="mk_abstract(idx, abstract, include_figures)">
+<%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
     \subsection*{\textmd{\sffamily [${abstract.poster_id}]} \hspace{1mm} ${mk_tex_text(abstract.title)} }
     \noindent ${mk_authors(abstract.authors)}\\*[0.5ex]
     \small
@@ -171,15 +174,17 @@ cur_state = check_cur_state(None, None)
     %if abstract.references:
         ${mk_references(abstract.references)}
     %endif
+    %if print_meta:
     \small
     Topic: ${abstract.topic}
     %if abstract.is_talk:
     Talk: ${mk_tex_text(abstract.reason_for_talk)}\\*[-0.5ex]
     %endif
     \normalsize
+    %endif
     \vskip \glueexpr\smallskipamount + 0pt plus 10ex minus 3ex\relax
     %%\pagebreak[3]
-    \clearpage
+
 </%def>
 
 <%def name="mk_authors(authors)">
