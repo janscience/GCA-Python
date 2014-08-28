@@ -90,6 +90,12 @@ class Conference(Entity):
         group = filter(lambda x: x.prefix == gid, groups)[0]
         return "%s %d" % (group.brief, aid)
 
+    def get_group(self, sort_id):
+        gid = sort_id >> 16
+        groups = [Group(gd) for gd in self._data['groups']]
+        group = filter(lambda x: x.prefix == gid, groups)[0]
+        return group
+
     @staticmethod
     def from_data(data):
         js = json.loads(data)
