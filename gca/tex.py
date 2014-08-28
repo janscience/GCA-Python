@@ -19,9 +19,29 @@ def mk_tex_text(text, is_body=False):
     return text
 
 
+def check_cur_state(abstract, state):
+    if abstract is None:
+        return {'cur_chap': None, 'cur_section': None}
+
+    if abstract.conference is None:
+        return None, None
+
+    res_chapter, res_section = None, None
+    group = abstract.conference.get_group(abstract.sort_id)
+    if state['cur_chap'] != group.name:
+        state['cur_chap'] = group.name
+        res_chapter = group.name
+
+    section = abstract.topic
+    if section != state['cur_section']:
+        state['cur_section'] = section
+        res_section = section
+
+    return res_chapter, res_section
+
 basic_tempate = r"""
 <%!
-from gca.tex import mk_tex_text
+from gca.tex import mk_tex_text, check_cur_state
 import os
 %>
 
@@ -52,6 +72,8 @@ final%%
 \usepackage{mathtools}
 \usepackage{amssymb}
 
+\usepackage{chapterthumb}
+
 % if figures is not None:
 \usepackage{caption}
 \usepackage{graphicx}
@@ -80,7 +102,6 @@ final%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-
 \frontmatter
 
 %%%%%%%%%%%%%
@@ -89,7 +110,21 @@ final%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<%
+cur_state = check_cur_state(None, None)
+%>
+
 % for idx, abstract in enumerate(abstracts):
+<%
+    new_chapter, new_section = check_cur_state(abstract, cur_state)
+%>
+    %if new_chapter is not None:
+    \cleardoublepage \chapter{${new_chapter}} \addtocounter{chapterthumb}{1} \newpage
+    %endif
+    %if new_section is not None:
+    \section{${new_section}}
+    %endif
+
     ${mk_abstract(idx, abstract, figures is not None)}
 % endfor
 
