@@ -45,6 +45,8 @@ from gca.tex import mk_tex_text, check_cur_state
 import os
 %>
 
+%if not bare:
+
 %%!TEX TS-program = lualatex
 %%!TEX encoding = UTF-8 Unicode
 
@@ -107,6 +109,8 @@ final%%
 %%%%%%%%%%%%%
 \mainmatter
 
+%endif
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -130,12 +134,15 @@ cur_state = check_cur_state(None, None)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% appendix
+%if not bare:
 \backmatter
 \chapter{Index}
 \sffamily\footnotesize
 \chapter{Index}
 \printindex{pages}{Authors}
 
+\end{document}
+%endif
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 <%def name="mk_abstract(idx, abstract, include_figures)">
@@ -227,5 +234,4 @@ ${mk_tex_text(acknowledgements)}\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\end{document}
 """
