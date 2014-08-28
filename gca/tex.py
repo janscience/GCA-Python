@@ -150,14 +150,13 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
     \subsection*{\textmd{\sffamily [${abstract.poster_id}]} \hspace{1mm} ${mk_tex_text(abstract.title)} }
-    \noindent ${mk_authors(abstract.authors)}\\*[0.5ex]
-    \small
-    ${mk_affiliations(abstract.affiliations)}
+    \noindent ${mk_authors(abstract.authors)} \\*[0.5ex]
+    \small ${mk_affiliations(abstract.affiliations)} \
     %if abstract.doi:
     doi: \href{http://dx.doi.org/${abstract.doi}}{${abstract.doi}}
     %endif
-    %%\normalsize \nopagebreak\\*[-2.0ex]
-    \normalsize
+    \normalsize \nopagebreak\\*[-2.0ex]
+
 
     ${abstract.text}
     %if abstract.alt_id > 0 and abstract.conference is not None:
@@ -183,7 +182,7 @@ cur_state = check_cur_state(None, None)
     \normalsize
     %endif
     \vskip \glueexpr\smallskipamount + 0pt plus 10ex minus 3ex\relax
-    %%\pagebreak[3]
+    \pagebreak[3]
 
 </%def>
 
@@ -193,8 +192,7 @@ cur_state = check_cur_state(None, None)
      sep = ', ' if idx+1 < len(authors) else ''
      aff = author.format_affiliation()
      epi = '$^{%s}$' % aff if aff else ''
-  %>
-  ${author.format_name()}${epi}${sep}\index{pages}{${author.index_name}}\
+  %> ${author.format_name()}${epi}${sep}\index{pages}{${author.index_name}} \
 % endfor
 </%def>
 
