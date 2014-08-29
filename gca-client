@@ -52,6 +52,12 @@ if __name__ == '__main__':
     parser_abs.add_argument('fields', type=str, nargs='+', help='fields to patch online in the abstract')
     parser_abs.set_defaults(cmd='patch')
 
+    parser_abs = subparsers.add_parser("set-state", help='set the state if abstracts')
+    parser_abs.add_argument('state', type=str, help='new state for the abstract')
+    parser_abs.add_argument('uuid', type=str, nargs='+', help='abstracts to set the state')
+    parser_abs.add_argument('--note', type=str, dest='note', default='', help='note to attach to the state change log')
+    parser_abs.set_defaults(cmd='set-state')
+
     args = parser.parse_args()
 
     auth = NetRCAuth()
@@ -113,3 +119,21 @@ if __name__ == '__main__':
                 sys.stderr.write('\t%s [%s]\n' % (f[0], f[1]))
 
         write_json(abstracts)
+    elif args.cmd == 'set-state':
+        import urllib2
+        failed = []
+        logs = []
+        for uuid in args.uuid:
+            try:
+                log = session.set_state(uuid, args.state, args.note, raw=True)
+                logs.append(log)
+            except urllib2.HTTPError, error:
+                sys.stderr.write('[E] Failed: %s \n' % str(error.code))
+                failed.append((uuid, str(error.code)))
+
+        if len(failed):
+            sys.stderr.write('Following abstracts had an error while setting the state [N = %d of %d]:\n' %
+                             (len(failed), len(args.uuid)))
+        for f in failed:
+            sys.stderr.write('\t%s [%s]\n' % (f[0], f[1]))
+        write_json(logs)
