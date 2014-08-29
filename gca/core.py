@@ -570,6 +570,16 @@ class Session(object):
         data = self._fetch(url)
         return data if raw else [LogEntry(e) for e in data]
 
+    @authenticated
+    def set_state(self, uuid_or_url, state, note, raw=False):
+        url = self._build_url(uuid_or_url, 'state', otype='abstracts')
+        state_change = {'state': state, 'note': note}
+        data = json.dumps(state_change)
+        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+        req.get_method = lambda: 'PUT'  # monkey see, monkey do
+        data = self._fetch(req)
+        return data if raw else [LogEntry(e) for e in data]
+
     def _build_url(self, uuid_or_url, target, otype='abstracts'):
         if uuid_or_url.startswith('http:'):
             url = uuid_or_url
