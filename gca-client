@@ -91,7 +91,25 @@ if __name__ == '__main__':
     elif args.cmd == 'patch':
         import codecs
         import json
+        import urllib2
         fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
         data = json.load(fd)
-        abstracts = [session.patch_abstract(a, args.fields, raw=True) for a in data]
+        abstracts = []
+        failed = []
+        for abstract in data:
+            uuid = abstract['uuid']
+            try:
+                sys.stderr.write('[P] %s\n' % uuid)
+                patched = session.patch_abstract(abstract, args.fields, raw=True)
+                abstracts.append(patched)
+            except urllib2.HTTPError, error:
+                sys.stderr.write('[E] Failed: %s \n' % str(error.code))
+                failed.append((uuid, str(error.code)))
+
+        if len(failed):
+            sys.stderr.write('Following abstracts could not be patched [N = %d of %d]:\n' %
+                             (len(failed), len(data)))
+            for f in failed:
+                sys.stderr.write('\t%s [%s]\n' % (f[0], f[1]))
+
         write_json(abstracts)
