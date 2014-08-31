@@ -185,8 +185,15 @@ class Author(BaseObject):
     def full_name(self):
         return self.format_name()
 
-    def format_name(self):
+    def format_name(self, inverted=False):
         d = self._data
+
+        if inverted:
+            middle = self.format_initials(d['middleName'], suffix='.')
+            if middle and len(middle):
+                middle = ' ' + middle
+            return "%s, %s%s" % (d['lastName'], d['firstName'], middle)
+
         middle = d['middleName'] + u' ' if d['middleName'] else u""
         return d['firstName'] + u' ' + middle + d['lastName']
 
@@ -202,11 +209,11 @@ class Author(BaseObject):
                             self.format_initials(self.middle_name))
 
     @staticmethod
-    def format_initials(name):
+    def format_initials(name, separator='', suffix=''):
         if not name:
             return ""
         comps = name.split(' ')
-        return ''.join([a[0] for a in comps])
+        return separator.join([a[0] + suffix for a in comps])
 
 
 class Reference(BaseObject):
