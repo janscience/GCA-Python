@@ -6,6 +6,10 @@ from __future__ import unicode_literals
 import argparse
 import codecs
 import sys
+import datetime
+
+from lxml import etree
+from lxml.builder import ElementMaker
 
 from gca.core import Abstract
 
@@ -14,6 +18,67 @@ def gen_dois(abstracts, prefix):
     for idx, a in enumerate(abstracts):
         a.doi = "%s%04d" % (prefix, idx+1)
     data = Abstract.to_json(abstracts)
+    sys.stdout.write(data.encode('utf-8'))
+
+
+def gen_xml_md_abstract_text(abstract, do_it=True):
+    if not do_it:
+        return []
+    E = ElementMaker(namespace="http://datacite.org/schema/kernel-3",
+                     nsmap={None: "http://datacite.org/schema/kernel-3"})
+    try:
+        text = abstract.text.decode("utf-8", "ignore")
+    except UnicodeEncodeError:
+        return []
+    return E.descriptions(E.description(text, descriptionType='Abstract'))
+
+
+def gen_xml_metadata(abstract):
+    doi = abstract.doi
+    today = datetime.date.today()
+    E = ElementMaker(namespace="http://datacite.org/schema/kernel-3",
+                     nsmap={None: "http://datacite.org/schema/kernel-3"})
+
+    doc = E.resource(
+        E.identifier(doi, identifierType='DOI'),
+        E.creators(*[E.creator(E.creatorName(au.format_name(True))) for au in abstract.authors]),
+        E.titles(E.title(abstract.title)),
+        E.subjects(E.subject('Bernstein Conference'),
+                   E.subject('Computational Neuroscience')),
+        E.publisher('G-Node'),
+        E.publicationYear(str(today.year)),
+        E.contributors(E.contributor(E.contributorName('German Neuroinformatics Node'),
+                                     contributorType='DataManager')),
+        E.dates(E.date(today.isoformat(), dateType='Issued')),
+        E.langauge('eng'),
+        E.resourceType('Conference Abstract', resourceTypeGeneral='Text'),
+        *gen_xml_md_abstract_text(abstract)
+    )
+    return doc
+
+
+def gen_xml_doi_data(abstract):
+    E = ElementMaker(namespace="http://datacite.org/schema/kernel-3",
+                     nsmap={None: "http://datacite.org/schema/kernel-3"})
+    if not abstract.doi:
+        sys.stderr.write('[W] %s has NO DOI\n' % abstract.uuid)
+        return None
+
+    doc = E.DOIdata(
+        E.DOI(abstract.doi),
+        E.URL('http://abstracts.g-node.org/abstracts/%s' % abstract.uuid),
+        gen_xml_metadata(abstract)
+    )
+    return doc
+
+
+def gen_xml(abstracts):
+    E = ElementMaker(namespace="http://datacite.org/schema/kernel-3",
+                     nsmap={None: "http://datacite.org/schema/kernel-3"})
+    docs = [gen_xml_doi_data(a) for a in abstracts]
+    docs = filter(lambda x: x is not None, docs)
+    doc = E.resources(*docs)
+    data = etree.tostring(doc, pretty_print=True)
     sys.stdout.write(data.encode('utf-8'))
 
 
@@ -33,8 +98,13 @@ if __name__ == '__main__':
     sub_parser.add_argument('prefix', type=str)
     sub_parser.set_defaults(cmd='gen')
 
+    sub_parser = subparsers.add_parser("xml", help='generate xml for uploading')
+    sub_parser.set_defaults(cmd='xml')
+
     args = parser.parse_args()
 
     abs_list = read_abstracts(args.file)
     if args.cmd == 'gen':
         gen_dois(abs_list, args.prefix)
+    elif args.cmd == 'xml':
+        gen_xml(abs_list)
