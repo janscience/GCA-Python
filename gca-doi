@@ -9,15 +9,32 @@ import sys
 
 from gca.core import Abstract
 
+
+def gen_dois(abstracts, prefix):
+    for idx, a in enumerate(abstracts):
+        a.doi = "%s%04d" % (prefix, idx+1)
+    data = Abstract.to_json(abstracts)
+    sys.stdout.write(data.encode('utf-8'))
+
+
+def read_abstracts(path):
+    fd = codecs.open(path, 'r', encoding='utf-8') if path != '-' else sys.stdin
+    abstracts = Abstract.from_data(fd.read())
+    return abstracts
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA doi - generate DOIs for abstracts')
     parser.add_argument('file', type=str, default='-')
-    parser.add_argument('prefix', type=str)
+
+    subparsers = parser.add_subparsers(help='commands')
+
+    sub_parser = subparsers.add_parser("generate", help='generate dois')
+    sub_parser.add_argument('prefix', type=str)
+    sub_parser.set_defaults(cmd='gen')
+
     args = parser.parse_args()
 
-    fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
-    abstracts = Abstract.from_data(fd.read())
-    for idx, a in enumerate(abstracts):
-        a.doi = "%s%04d" % (args.prefix, idx+1)
-    data = Abstract.to_json(abstracts)
-    sys.stdout.write(data.encode('utf-8'))
+    abs_list = read_abstracts(args.file)
+    if args.cmd == 'gen':
+        gen_dois(abs_list, args.prefix)
