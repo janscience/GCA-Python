@@ -480,9 +480,9 @@ class Session(object):
         purl = urlparse(self.url)
         hostname = purl.hostname
         user, password = self.__auth.get_credentials(hostname)
-        params = urllib.urlencode({'username': user, 'password': password})
+        params = urllib.urlencode({'identifier': user, 'password': password})
         url_opener = self.__url_opener
-        resp = url_opener.open(self.url + "/authenticate/userpass", params)
+        resp = url_opener.open(self.url + "/authenticate/credentials", params)
         code = resp.getcode()
         if code != 200:
             raise TransportError(code, "Could not log in")

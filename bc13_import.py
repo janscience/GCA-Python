@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
-from gca.core import Abstract, Reference, Author, Affiliation
+from gca.core import Abstract, Reference, Author, Affiliation, Session
+from gca.auth import UPAuth
 
 import argparse
 import sys
 import codecs
 import json
 from nameparser import HumanName
-from nameparser.constants import TITLES as NAME_TITLES
-
-kTitles = NAME_TITLES - set(['gen'])
 
 
 def convert_field(obj, old_name, abstract, new_name=None, def_value=None):
@@ -41,7 +39,7 @@ def convert_refs(old):
 
 def convert_author1(old):
     data = old['name']
-    h_name = HumanName(data, titles_c=kTitles)
+    h_name = HumanName(data)
     author = Author()
     author.first_name = h_name.first
     author.middle_name = h_name.middle
@@ -92,15 +90,26 @@ def convert_abstract(old):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA - import old BC13 JS')
     parser.add_argument('file', type=str, default='-')
+    parser.add_argument('user', type=str, default='alice@foo.com')
+    parser.add_argument('password', type=str, default='testtest')
+    parser.add_argument('host', type=str, default='http://localhost:9000')
+    parser.add_argument('conference', type=str, default='8e8fc1f4-7843-418a-b0b8-c8f0d7fc7f89')
     args = parser.parse_args()
 
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
-    args = parser.parse_args()
 
     data = fd.read()
     fd.close()
     bc13 = json.loads(data)
 
     new = [convert_abstract(old) for old in bc13]
-    js = Abstract.to_json(new)
-    sys.stdout.write(js.encode('utf-8'))
+
+    auth = UPAuth(user=args.user, password=args.password)
+    session = Session(args.host, auth)
+
+    # upload single abstract
+    res = session.upload_abstract(new[0], conference, raw=True)
+
+    # test output 
+    #js = Abstract.to_json(new)
+    #sys.stdout.write(js.encode('utf-8'))
