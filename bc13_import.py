@@ -11,6 +11,15 @@ import json
 from nameparser import HumanName
 
 
+"""
+Example usage:
+
+./bc13_import.py "/home/andrey/data/BCCN13/bc13data.js" "2397dc3a-5f2c-41f0-aaea-771daee7382f"
+
+where UUID is the cconferencce ID to upload abstracts.
+"""
+
+
 def convert_field(obj, old_name, abstract, new_name=None, def_value=None):
     if new_name is None:
         new_name = old_name
@@ -44,6 +53,11 @@ def convert_author1(old):
     author.first_name = h_name.first
     author.middle_name = h_name.middle
     author.last_name = h_name.last
+
+    values = old['epithet'].split(',')
+    parse = lambda x: int(x.replace("*", ""))
+    author.affiliations = [parse(x) for x in values if x != '*']
+
     return author
 
 
@@ -79,21 +93,22 @@ def convert_abstract(old):
     convert_field(old, 'abstract', abstract, 'text')
     convert_field(old, 'acknowledgements', abstract, 'acknowledgements')
     convert_field(old, 'topic', abstract)
+    convert_field(old, 'doi', abstract)
 
     abstract.references = convert_refs(old)
     abstract.authors = convert_authors(old)
     abstract.affiliations = convert_affiliations(old)
 
-    abstract.state = 'Published'
+    abstract.state = 'Accepted'
     return abstract
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA - import old BC13 JS')
     parser.add_argument('file', type=str, default='-')
-    parser.add_argument('user', type=str, default='alice@foo.com')
-    parser.add_argument('password', type=str, default='testtest')
-    parser.add_argument('host', type=str, default='http://localhost:9000')
-    parser.add_argument('conference', type=str, default='8e8fc1f4-7843-418a-b0b8-c8f0d7fc7f89')
+    parser.add_argument('conference', type=str)
+    parser.add_argument('host', nargs='?', type=str, default='http://localhost:9000')
+    parser.add_argument('user', nargs='?', type=str, default='alice@foo.com')
+    parser.add_argument('password', nargs='?', type=str, default='testtest')
     args = parser.parse_args()
 
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
@@ -107,9 +122,15 @@ if __name__ == '__main__':
     auth = UPAuth(user=args.user, password=args.password)
     session = Session(args.host, auth)
 
-    # upload single abstract
-    res = session.upload_abstract(new[0], conference, raw=True)
+    for i, to_send in enumerate(new):
+        try:
+            res = session.upload_abstract(to_send, args.conference, raw=True)
+        except:
+            print(json.dumps(to_send.to_data()))
 
-    # test output 
+        print("Uploaded %d abstracts..\r" % i, end="")
+
+    # test output
+    #print(json.dumps(to_send.to_data()))
     #js = Abstract.to_json(new)
     #sys.stdout.write(js.encode('utf-8'))
