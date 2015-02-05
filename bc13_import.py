@@ -94,6 +94,7 @@ def convert_abstract(old):
     convert_field(old, 'acknowledgements', abstract, 'acknowledgements')
     convert_field(old, 'topic', abstract)
     convert_field(old, 'doi', abstract)
+    convert_field(old, 'id', abstract, 'sort_id')
 
     abstract.references = convert_refs(old)
     abstract.authors = convert_authors(old)
