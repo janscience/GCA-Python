@@ -588,7 +588,7 @@ class Session(object):
         return data if raw else [LogEntry(e) for e in data]
 
     def _build_url(self, uuid_or_url, target, otype='abstracts'):
-        if uuid_or_url.startswith('http:'):
+        if uuid_or_url.startswith('http:') or uuid_or_url.startswith('https:'):
             url = uuid_or_url
         else:
             url = "%s/api/%s/%s/%s" % (self.url, otype, uuid_or_url, target)
