@@ -634,10 +634,17 @@ class Session(object):
         return url
 
     def _complete_abstract(self, abstract):
-        owners = self.get_owners(abstract['owners'], raw=True)
-        abstract.update({'owners': owners})
-        log = self.get_state_log(abstract['stateLog'], raw=True)
-        abstract.update({'stateLog': log})
+        try:
+            owners = self.get_owners(abstract['owners'], raw=True)
+            abstract.update({'owners': owners})
+        except urllib2.HTTPError:
+            sys.stderr.write("Could not fetch owners for %s [%s]\n" % (abstract["uuid"], abstract['owners']))
+        try:
+            log = self.get_state_log(abstract['stateLog'], raw=True)
+            abstract.update({'stateLog': log})
+        except urllib2.HTTPError:
+            sys.stderr.write("Could not fetch state log for %s\n" % abstract["uuid"])
+
         return abstract
 
     def _fetch_binary(self, url):
