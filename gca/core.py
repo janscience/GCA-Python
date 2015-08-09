@@ -181,6 +181,10 @@ class Author(BaseObject):
     def affiliations(self):
         return self._data['affiliations']
 
+    @affiliations.setter
+    def affiliations(self, value):
+        self._data['affiliations'] = value
+
     @property
     def full_name(self):
         return self.format_name()
