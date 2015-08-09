@@ -110,7 +110,7 @@ class Conference(Entity):
         return Conference(js)
 
 
-class Affiliation(BaseObject):
+class Affiliation(Entity):
     def __init__(self, data=None):
         super(Affiliation, self).__init__(data)
 
@@ -157,7 +157,7 @@ class Affiliation(BaseObject):
         return u', '.join(active)
 
 
-class Author(BaseObject):
+class Author(Entity):
     def __init__(self, data=None):
         super(Author, self).__init__(data)
 
@@ -228,7 +228,7 @@ class Author(BaseObject):
         return separator.join([a[0] + suffix for a in comps])
 
 
-class Reference(BaseObject):
+class Reference(Entity):
     def __init__(self, data=None):
         super(Reference, self).__init__(data)
 
