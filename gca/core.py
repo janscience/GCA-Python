@@ -11,6 +11,7 @@ from collections import defaultdict
 import os
 import sys
 from .util import make_fields
+import uuid
 
 
 class TransportError(Exception):
@@ -41,6 +42,13 @@ class Entity(BaseObject):
     def uuid(self):
         return self._data['uuid']
 
+    @uuid.setter
+    def uuid(self, value):
+        if 'uuid' in self._data:
+            print("[W] overriding UUID", file=sys.stderr)
+        if type(value) == uuid.UUID:
+            value = str(value)
+        self._data['uuid'] = value
 
 class Group(Entity):
     def __init__(self, data=None):
