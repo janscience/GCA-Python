@@ -422,6 +422,16 @@ class Abstract(Entity):
             return self.conference.sort_id_to_string(sid)
         return str(sid)
 
+    @poster_id.setter
+    def poster_id(self, value):
+        if self.conference is None:
+            raise ValueError('Need conference!')
+        brief, num = self.conference.parse_sortid_string(value)
+        group = self.conference.group_for_brief(brief)
+        sortId = group.prefix << 16
+        self._data['sortId'] = sortId + num
+
+
     def select_field(self, field, fold=False):
         if type(field) == str or type(field) == unicode:
             field = make_fields(field)
