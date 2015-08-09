@@ -110,6 +110,17 @@ class Conference(Entity):
         if len(selected) != 1:
             raise ValueError('Error finding group with brief [%s: %d]' % (brief, len(selected)))
         return selected[0]
+
+    @staticmethod
+    def parse_sortid_string(sid):
+        for i, x in enumerate(sid):
+            if x.isdigit():
+                prefix, num = sid[:i], int(sid[i:])
+                assert(prefix.isalpha())
+                assert(int(num) > -1)
+                return prefix, num
+        raise ValueError('Invalid sid')
+
     @staticmethod
     def from_data(data):
         js = json.loads(data)
