@@ -104,6 +104,12 @@ class Conference(Entity):
         group = filter(lambda x: x.prefix == gid, groups)[0]
         return group
 
+    def group_for_brief(self, brief):
+        groups = [Group(gd) for gd in self._data['groups']]
+        selected = filter(lambda x: x.brief == brief, groups)
+        if len(selected) != 1:
+            raise ValueError('Error finding group with brief [%s: %d]' % (brief, len(selected)))
+        return selected[0]
     @staticmethod
     def from_data(data):
         js = json.loads(data)
