@@ -27,22 +27,25 @@ def gen_xml_md_abstract_text(abstract, do_it=True):
     E = ElementMaker(namespace="http://datacite.org/schema/kernel-3",
                      nsmap={None: "http://datacite.org/schema/kernel-3"})
     try:
-        text = abstract.text.decode("utf-8", "ignore")
-    except UnicodeEncodeError:
+        text = abstract.text
+        if type(text) is not unicode:
+            text = unicode(abstract.text, errors='ignore')
+        elms = E.descriptions(E.description(text, descriptionType='Abstract'))
+    except (UnicodeEncodeError, ValueError) as e:
+        print('[E] text [%s]\n -> %s' % (abstract.uuid, e), file=sys.stderr)
         return []
-    return E.descriptions(E.description(text, descriptionType='Abstract'))
-
+    return elms
 
 def gen_xml_metadata(abstract):
     doi = abstract.doi
     today = datetime.date.today()
     E = ElementMaker(namespace="http://datacite.org/schema/kernel-3",
                      nsmap={None: "http://datacite.org/schema/kernel-3"})
-
+    
     doc = E.resource(
         E.identifier(doi, identifierType='DOI'),
         E.creators(*[E.creator(E.creatorName(au.format_name(True))) for au in abstract.authors]),
-        E.titles(E.title(abstract.title)),
+        E.titles(E.title(abstract.title.replace('$', ''))),
         E.subjects(E.subject('Bernstein Conference'),
                    E.subject('Computational Neuroscience')),
         E.publisher('G-Node'),
@@ -64,11 +67,17 @@ def gen_xml_doi_data(abstract):
         sys.stderr.write('[W] %s has NO DOI\n' % abstract.uuid)
         return None
 
-    doc = E.DOIdata(
-        E.DOI(abstract.doi),
-        E.URL('http://abstracts.g-node.org/abstracts/%s' % abstract.uuid),
-        gen_xml_metadata(abstract)
-    )
+    try:
+        x = gen_xml_metadata(abstract)
+        doc = E.DOIdata(
+            E.DOI(abstract.doi),
+            E.URL(u'http://abstracts.g-node.org/abstracts/%s' % abstract.uuid),
+            x
+        )
+    except ValueError, e:
+        print("[E] %s (%s)\n -> %s" % (abstract.uuid, abstract.doi, str(e)), file=sys.stderr)
+        doc = None
+
     return doc
 
 
@@ -80,7 +89,10 @@ def gen_xml(abstracts):
     doc = E.resources(*docs)
     data = etree.tostring(doc, pretty_print=True)
     sys.stdout.write(data.encode('utf-8'))
-
+    print('%d of %d abstract\'s xml generated' % (len(docs), len(abstracts)), file=sys.stderr)
+    diff = len(abstracts) - len(docs)
+    if diff > 0:
+        print('[W] %d abstract(s) not converted!!' % diff, file=sys.stderr)
 
 def read_abstracts(path):
     fd = codecs.open(path, 'r', encoding='utf-8') if path != '-' else sys.stdin
