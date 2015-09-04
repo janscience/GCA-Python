@@ -53,7 +53,7 @@ def gen_xml_metadata(abstract):
         E.contributors(E.contributor(E.contributorName('German Neuroinformatics Node'),
                                      contributorType='DataManager')),
         E.dates(E.date(today.isoformat(), dateType='Issued')),
-        E.langauge('eng'),
+        E.language('eng'),
         E.resourceType('Conference Abstract', resourceTypeGeneral='Text'),
         *gen_xml_md_abstract_text(abstract)
     )
