@@ -56,6 +56,8 @@ def check_abstract(abstract, args):
     if check_owners and len(abstract.owners) < 1:
         yield Issue('Error', 'Abstract has no owner', abstract)
 
+    if abstract.sort_id < 1:
+        yield Issue('Error', 'Abstract has no sort id', abstract)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Linter')
