@@ -401,6 +401,8 @@ class Abstract(Entity):
 
     @property
     def sort_id(self):
+        if 'sortId' not in self._data:
+            return 0
         return self._data['sortId']
 
     @sort_id.setter
