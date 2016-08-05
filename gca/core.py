@@ -351,6 +351,8 @@ class Abstract(Entity):
 
     @property
     def references(self):
+        if 'references' not in self._data:
+            return []
         return [Reference(r) for r in self._data['references']]
 
     @references.setter
@@ -359,10 +361,14 @@ class Abstract(Entity):
 
     @property
     def figures(self):
+        if 'figures' not in self._data:
+            return []
         return [Figure(f) for f in self._data['figures']]
 
     @property
     def log(self):
+        if 'stateLog' not in self._data:
+            return []
         log_data = self._data['stateLog']
         if type(log_data) != list:
             return None
@@ -370,6 +376,8 @@ class Abstract(Entity):
 
     @property
     def owners(self):
+        if 'owners' not in self._data:
+            return []
         owner_data = self._data['owners']
         if type(owner_data) != list:
             return None
