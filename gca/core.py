@@ -296,6 +296,36 @@ class Figure(Entity):
         return self._data['caption']
 
 
+class AbstractType(Entity):
+    def __init__(self, data=None, conference=None):
+        super(AbstractType, self).__init__(data)
+        self.conference = conference
+
+    @property
+    def name(self):
+        return self._data['name']
+
+    @name.setter
+    def name(self, value):
+        self._data['name'] = value
+
+    @property
+    def short(self):
+        return self._data['short']
+
+    @short.setter
+    def short(self, value):
+        self._data['short'] = value
+
+    @property
+    def prefix(self):
+        return self._data['prefix']
+
+    @prefix.setter
+    def prefix(self, value):
+        self._data['prefix'] = value
+
+
 class Abstract(Entity):
     def __init__(self, data=None, conference=None):
         super(Abstract, self).__init__(data)
@@ -390,6 +420,12 @@ class Abstract(Entity):
     @topic.setter
     def topic(self, value):
         self._data['topic'] = value
+
+    @property
+    def abstypes(self):
+        if 'abstrTypes' not in self._data:
+            return []
+        return [AbstractType(t) for t in self._data['abstrTypes']]
 
     @property
     def is_talk(self):
