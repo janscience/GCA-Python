@@ -582,8 +582,9 @@ class Session(object):
         return code
 
     @authenticated
-    def get_all_abstracts(self, conference, raw=False, full=False):
-        url = "%s/api/conferences/%s/allAbstracts" % (self.url, conference)
+    def get_all_abstracts(self, conference, raw=False, full=False, public=False):
+        endpoint = "abstracts" if public else "allAbstracts"
+        url = "%s/api/conferences/%s/%s" % (self.url, conference, endpoint)
         data = self._fetch(url)
 
         if full:

@@ -22,6 +22,7 @@ if __name__ == '__main__':
     parser_abs = subparsers.add_parser("abstracts", help='list abstracts')
     parser_abs.add_argument('conference', type=str, help='for which conference')
     parser_abs.add_argument('-f', '--full', help='fetch all data', action='store_true', default=False)
+    parser_abs.add_argument('-p', '--public', help='fetch only public', action='store_true', default=False)
     parser_abs.set_defaults(cmd='abstracts')
 
     parser_abs = subparsers.add_parser("image", help='get figure images')
@@ -67,7 +68,7 @@ if __name__ == '__main__':
         session.authenticate()
 
     if args.cmd == 'abstracts':
-        abstracts = session.get_all_abstracts(args.conference, raw=True, full=args.full)
+        abstracts = session.get_all_abstracts(args.conference, raw=True, full=args.full, public=args.public)
         write_json(abstracts)
     elif args.cmd == 'image':
         paths = [session.get_figure_image(uuid, path=args.path) for uuid in args.uuid]
