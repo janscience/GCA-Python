@@ -7,6 +7,7 @@ import argparse
 import codecs
 import sys
 import datetime
+from six import string_types
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -28,8 +29,8 @@ def gen_xml_md_abstract_text(abstract, do_it=True):
                      nsmap={None: "http://datacite.org/schema/kernel-3"})
     try:
         text = abstract.text
-        if type(text) is not unicode:
-            text = unicode(abstract.text, errors='ignore')
+        if not isinstance(text, string_types):
+            text = str(abstract.text, errors='ignore')
         elms = E.descriptions(E.description(text, descriptionType='Abstract'))
     except (UnicodeEncodeError, ValueError) as e:
         print('[E] text [%s]\n -> %s' % (abstract.uuid, e), file=sys.stderr)
@@ -71,10 +72,10 @@ def gen_xml_doi_data(abstract):
         x = gen_xml_metadata(abstract)
         doc = E.DOIdata(
             E.DOI(abstract.doi),
-            E.URL(u'http://abstracts.g-node.org/abstracts/%s' % abstract.uuid),
+            E.URL('http://abstracts.g-node.org/abstracts/%s' % abstract.uuid),
             x
         )
-    except ValueError, e:
+    except ValueError as e:
         print("[E] %s (%s)\n -> %s" % (abstract.uuid, abstract.doi, str(e)), file=sys.stderr)
         doc = None
 

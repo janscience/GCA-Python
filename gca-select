@@ -20,7 +20,7 @@ def maybe_group(separator, print_empty, lst):
         return lst
     if not lst:
         return [''] if print_empty else lst
-    x = map(unicode, lst)
+    x = map(str, lst)
     return [separator.join(x)] if any(x) else []
 
 if __name__ == '__main__':
@@ -54,6 +54,6 @@ if __name__ == '__main__':
 
     val = do_chain(p_fld(do_chain(p_mlt(a.select_field(f)) for f in fields)) for a in abstracts)
     val = filter(lambda a: a is not None, val)
-    data = delimiter.join(map(unicode, val))
+    data = delimiter.join(map(str, val))
     sys.stdout.write(data.encode('utf-8'))
     sys.stdout.write(delimiter.encode('utf-8'))

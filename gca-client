@@ -109,7 +109,7 @@ if __name__ == '__main__':
                 sys.stderr.write('[P] %s\n' % uuid)
                 patched = session.patch_abstract(abstract, args.fields, raw=True)
                 abstracts.append(patched)
-            except urllib2.HTTPError, error:
+            except (urllib2.HTTPError) as error:
                 sys.stderr.write('[E] Failed: %s \n' % str(error.code))
                 failed.append((uuid, str(error.code)))
 
@@ -128,7 +128,7 @@ if __name__ == '__main__':
             try:
                 log = session.set_state(uuid, args.state, args.note, raw=True)
                 logs.append(log)
-            except urllib2.HTTPError, error:
+            except (urllib2.HTTPError) as error:
                 sys.stderr.write('[E] Failed: %s \n' % str(error.code))
                 failed.append((uuid, str(error.code)))
 

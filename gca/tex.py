@@ -7,12 +7,12 @@ def mk_tex_text(text, is_body=False):
     if text is None:
         return u""
 
-    text = re.sub(ur'(?<!(?<!\\)\\)(&)', ur"\&", text)
-    text = re.sub(ur'(?<!(?<!\\)\\)(#)', ur"\#", text)
-    text = re.sub(ur'(?<!(?<!\\)\\)(%)', ur"\%", text)
+    text = re.sub(r'(?<!(?<!\\)\\)(&)', r"\&", text)
+    text = re.sub(r'(?<!(?<!\\)\\)(#)', r"\#", text)
+    text = re.sub(r'(?<!(?<!\\)\\)(%)', r"\%", text)
 
     if not is_body:
-        text = re.sub(ur'(?<!(?<!\\)\\)(_)', ur"\_", text)
+        text = re.sub(r'(?<!(?<!\\)\\)(_)', r"\_", text)
 
     text = text.replace('', '')
 

@@ -12,7 +12,7 @@ from collections import OrderedDict
 
 
 class LastUpdatedOrderedDict(OrderedDict):
-    'Store items in the order the keys were last added'
+    '''Store items in the order the keys were last added'''
 
     def __setitem__(self, key, value):
         if key in self:
@@ -31,7 +31,7 @@ if __name__ == '__main__':
             abstracts[a.uuid] = a
         fd.close()
 
-    abstracts = [a for a in abstracts.itervalues()]
+    abstracts = [a for a in abstracts.values()]
 
     data = Abstract.to_json(abstracts)
     sys.stdout.write(data.encode('utf-8'))
