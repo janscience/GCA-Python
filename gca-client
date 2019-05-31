@@ -10,7 +10,7 @@ from gca.auth import NetRCAuth
 
 def write_json(json_data):
     data = Session.to_json(json_data)
-    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(data)
     return data
 
 if __name__ == '__main__':
