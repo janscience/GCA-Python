@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -19,7 +19,7 @@ class Issue(object):
         self.abstract = abstract
 
     def __str__(self):
-        return u'[%s] %s {%s}' % (self.level, self.message, self.abstract.uuid)
+        return '[%s] %s {%s}' % (self.level, self.message, self.abstract.uuid)
 
     def __repr__(self):
         return str(self)
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     for i in issues:
         d[i[0]] += i[1]
 
-    for k, v in d.iteritems():
+    for k, v in d.items():
         abstract = abstract_map[k]
         author = abstract.authors[0].last_name if len(abstract.authors) else ''
         title = abstract.title if abstract.title is not None else ''

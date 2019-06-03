@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         for f in filter_list:
             result += filter(f, abstracts)
         de_dup = {k.uuid: k for k in result}
-        abstracts = [a for k, a in de_dup.iteritems()]
+        abstracts = [a for k, a in de_dup.items()]
     else:
         for f in filter_list:
             abstracts = filter(f, abstracts)

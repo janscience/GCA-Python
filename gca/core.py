@@ -3,15 +3,17 @@ from __future__ import print_function
 from .util import getattr_maybelist
 
 import json
-import urllib2
+import urllib.request as request
 import urllib
-from cookielib import CookieJar
-from urlparse import urlparse
+from http.cookiejar import CookieJar
+from urllib import parse
 from collections import defaultdict
 import os
 import sys
 from .util import make_fields
 import uuid
+from six import string_types
+import functools
 
 
 class TransportError(Exception):
@@ -49,6 +51,7 @@ class Entity(BaseObject):
         if type(value) == uuid.UUID:
             value = str(value)
         self._data['uuid'] = value
+
 
 class Group(Entity):
     def __init__(self, data=None):
@@ -477,11 +480,10 @@ class Abstract(Entity):
         sortId = group.prefix << 16
         self._data['sortId'] = sortId + num
 
-
     def select_field(self, field, fold=False):
-        if type(field) == str or type(field) == unicode:
+        if isinstance(field, string_types):
             field = make_fields(field)
-        val = reduce(getattr_maybelist, field, self)
+        val = functools.reduce(getattr_maybelist, field, self)
 
         if fold:
             if len(val) == 0:
@@ -551,7 +553,7 @@ def authenticated(method):
 class Session(object):
     def __init__(self, url, authenticator):
         jar = CookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(jar))
+        opener = request.build_opener(request.HTTPCookieProcessor(jar))
 
         self.__url = url
         self.__cookie_jar = jar
@@ -569,12 +571,12 @@ class Session(object):
         return self.__is_authenticated
 
     def authenticate(self):
-        purl = urlparse(self.url)
+        purl = parse.urlparse(self.url)
         hostname = purl.hostname
         user, password = self.__auth.get_credentials(hostname)
-        params = urllib.urlencode({'identifier': user, 'password': password})
+        params = urllib.parse.urlencode({'identifier': user, 'password': password})
         url_opener = self.__url_opener
-        resp = url_opener.open(self.url + "/authenticate/credentials", params)
+        resp = url_opener.open(self.url + "/authenticate/credentials", params.encode("utf-8"))
         code = resp.getcode()
         if code != 200:
             raise TransportError(code, "Could not log in")
@@ -632,7 +634,7 @@ class Session(object):
 
         url = "%s/api/conferences/%s/abstracts" % (self.url, conference)
         data = json.dumps(abstract)
-        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+        req = request.Request(url, data, {'Content-Type': 'application/json'})
         js = self._fetch(req)
         return js if raw else Abstract(js)
 
@@ -646,7 +648,7 @@ class Session(object):
         url = "%s/api/abstracts/%s" % (self.url, uuid)
         patches = [{"op": "add", "path": "/%s" % f, "value": abstract[f]} for f in fields]
         data = json.dumps(patches)
-        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+        req = request.Request(url, data, {'Content-Type': 'application/json'})
         req.get_method = lambda: 'PATCH'  # monkey see, monkey do
         js = self._fetch(req)
         return js if raw else Abstract(js)
@@ -668,7 +670,7 @@ class Session(object):
         url = self._build_url(uuid_or_url, 'state', otype='abstracts')
         state_change = {'state': state, 'note': note}
         data = json.dumps(state_change)
-        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+        req = request.Request(url, data, {'Content-Type': 'application/json'})
         req.get_method = lambda: 'PUT'  # monkey see, monkey do
         data = self._fetch(req)
         return data if raw else [LogEntry(e) for e in data]
@@ -684,12 +686,12 @@ class Session(object):
         try:
             owners = self.get_owners(abstract['owners'], raw=True)
             abstract.update({'owners': owners})
-        except urllib2.HTTPError:
+        except request.HTTPError:
             sys.stderr.write("Could not fetch owners for %s [%s]\n" % (abstract["uuid"], abstract['owners']))
         try:
             log = self.get_state_log(abstract['stateLog'], raw=True)
             abstract.update({'stateLog': log})
-        except urllib2.HTTPError:
+        except request.HTTPError:
             sys.stderr.write("Could not fetch state log for %s\n" % abstract["uuid"])
 
         return abstract

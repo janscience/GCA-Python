@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from __future__ import print_function
 
 import argparse
@@ -10,7 +10,7 @@ from gca.auth import NetRCAuth
 
 def write_json(json_data):
     data = Session.to_json(json_data)
-    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(data)
     return data
 
 if __name__ == '__main__':
@@ -109,7 +109,7 @@ if __name__ == '__main__':
                 sys.stderr.write('[P] %s\n' % uuid)
                 patched = session.patch_abstract(abstract, args.fields, raw=True)
                 abstracts.append(patched)
-            except urllib2.HTTPError, error:
+            except (urllib2.HTTPError) as error:
                 sys.stderr.write('[E] Failed: %s \n' % str(error.code))
                 failed.append((uuid, str(error.code)))
 
@@ -128,7 +128,7 @@ if __name__ == '__main__':
             try:
                 log = session.set_state(uuid, args.state, args.note, raw=True)
                 logs.append(log)
-            except urllib2.HTTPError, error:
+            except (urllib2.HTTPError) as error:
                 sys.stderr.write('[E] Failed: %s \n' % str(error.code))
                 failed.append((uuid, str(error.code)))
 
