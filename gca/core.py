@@ -576,7 +576,7 @@ class Session(object):
         user, password = self.__auth.get_credentials(hostname)
         params = urllib.parse.urlencode({'identifier': user, 'password': password})
         url_opener = self.__url_opener
-        resp = url_opener.open(self.url + "/authenticate/credentials", params)
+        resp = url_opener.open(self.url + "/authenticate/credentials", params.encode("utf-8"))
         code = resp.getcode()
         if code != 200:
             raise TransportError(code, "Could not log in")
