@@ -19,7 +19,7 @@ def gen_dois(abstracts, prefix):
     for idx, a in enumerate(abstracts):
         a.doi = "%s%04d" % (prefix, idx+1)
     data = Abstract.to_json(abstracts)
-    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(data)
 
 
 def gen_xml_md_abstract_text(abstract, do_it=True):
@@ -89,7 +89,7 @@ def gen_xml(abstracts):
     docs = filter(lambda x: x is not None, docs)
     doc = E.resources(*docs)
     data = etree.tostring(doc, pretty_print=True)
-    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(data)
     print('%d of %d abstract\'s xml generated' % (len(docs), len(abstracts)), file=sys.stderr)
     diff = len(abstracts) - len(docs)
     if diff > 0:
