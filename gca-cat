@@ -34,4 +34,4 @@ if __name__ == '__main__':
     abstracts = [a for a in abstracts.values()]
 
     data = Abstract.to_json(abstracts)
-    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(data)

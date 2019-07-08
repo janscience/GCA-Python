@@ -51,4 +51,4 @@ if __name__ == '__main__':
         abstracts = abstracts[:args.N]
 
     data = Abstract.to_json(abstracts)
-    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(data)

@@ -38,7 +38,7 @@ def get_sorter(field):
         reverse = False
         field = field[1:]
 
-    fields = make_fields(field)
+    fields = field
 
     def sort_fn(abstract):
         val = abstract.select_field(fields, fold=True)
@@ -77,4 +77,4 @@ if __name__ == '__main__':
         abstracts = [set_sort_id(a, idx, args.assign, args.altid) for idx, a in enumerate(abstracts)]
 
     data = Abstract.to_json(abstracts)
-    sys.stdout.write(data.encode('utf-8'))
+    sys.stdout.write(data)

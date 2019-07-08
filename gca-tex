@@ -25,7 +25,7 @@ text_replacements = {
 
 def text_replace_all(text, replacements):
     if replacements is not None and text is not None:
-        for key, val in replacements.iteritems():
+        for key, val in replacements.items():
             text = text.replace(key, val)
 
     return text
@@ -79,4 +79,4 @@ if __name__ == '__main__':
                                    bare=args.bare, single_page=args.single_page,
                                    show_meta=args.show_meta)
     sys.stderr.write('[I] Done\n')
-    sys.stdout.write(rendered)
+    sys.stdout.write(rendered.decode('utf-8'))

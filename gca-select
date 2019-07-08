@@ -42,8 +42,7 @@ if __name__ == '__main__':
         conf = Conference.from_data(fd.read())
 
     delimiter = '\n'
-
-    fields = [make_fields(field) for field in args.fields]
+    fields = args.fields
     fd = codecs.open(args.file, 'r', encoding='utf-8') if args.file != '-' else sys.stdin
     abstracts = Abstract.from_data(fd.read(), conf)
 
@@ -55,5 +54,5 @@ if __name__ == '__main__':
     val = do_chain(p_fld(do_chain(p_mlt(a.select_field(f)) for f in fields)) for a in abstracts)
     val = filter(lambda a: a is not None, val)
     data = delimiter.join(map(str, val))
-    sys.stdout.write(data.encode('utf-8'))
-    sys.stdout.write(delimiter.encode('utf-8'))
+    sys.stdout.write(data)
+    sys.stdout.write(delimiter)
