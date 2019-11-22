@@ -607,7 +607,7 @@ class Session(object):
             os.mkdir(path)
 
         fn = os.path.join(path, uuid) if path is not None else uuid
-        with open(fn, 'w+') as fd:
+        with open(fn, 'w+b') as fd:
             fd.write(data)
         if add_ext:
             ext = self._guess_filetype(fn)
