@@ -45,10 +45,10 @@ Fetch all required scripts via git clone.
 
 ## Authentication
 
-A `.netrc` file with `machine`, `name` and `password` in the users home root is required.
-`name` has to be a GCA-Web user with appropriate conference admin privileges to access the 
+A `.netrc` file with `machine`, `login` and `password` in the users home root is required.
+`login` has to be a GCA-Web user with appropriate conference admin privileges to access the 
 conferences' information. e.g. content of a .netrc file:
 
     machine abstracts.conferences.org
-    user username@host.com
+    login username@host.com
     password plainPassword
