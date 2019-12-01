@@ -52,7 +52,6 @@ import os
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
 \usepackage[LGR, T1]{fontenc}
-\usepackage[english]{babel}
 \usepackage{textcomp}
 \usepackage{textgreek}
 \usepackage{microtype}
@@ -62,6 +61,8 @@ import os
 \DeclareUnicodeCharacter{8288}{}
 \DeclareUnicodeCharacter{57404}{t}
 \DeclareUnicodeCharacter{700}{'}
+
+\usepackage[english]{babel}
 
 \usepackage{mathtools}
 \usepackage{amssymb}
@@ -84,7 +85,8 @@ import os
 \makeindex{pages}
 \makeindex{posterid}
 
-\newenvironment{abstractblock}{\newpage\noindent\begin{minipage}[t]{1.\textwidth}}{\end{minipage}\vspace{2ex}}
+\newenvironment{abstractblock}{\newpage\noindent\begin{minipage}[t]{1.\textwidth}}{\end{minipage}\vskip \glueexpr\smallskipamount + 0pt plus 10ex minus 3ex\relax
+    \pagebreak[3]}
 \newenvironment{authors}{}{}
 \newenvironment{affiliations}{\footnotesize\itshape\begin{enumerate}}{\end{enumerate}}
 \newenvironment{abstracttext}{}{}
@@ -94,6 +96,11 @@ import os
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+
+\frontmatter
+
+%%%%%%%%%%%%%
+\mainmatter
 
 %endif
 
@@ -109,7 +116,7 @@ cur_state = check_cur_state(None, None)
     new_chapter, new_section = check_cur_state(abstract, cur_state)
 %>
     %if new_chapter is not None:
-    %%\cleardoublepage \chapter{${new_chapter}} \addtocounter{chapterthumb}{1} \newpage
+    \cleardoublepage \chapter{${new_chapter}} \addtocounter{chapterthumb}{1} \newpage
     %endif
     %if new_section is not None:
     \section{${new_section}}
@@ -136,7 +143,7 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
 \begin{abstractblock}
-\section[${abstract.poster_id}]{${mk_tex_text(abstract.title)}}
+\subsection[${abstract.poster_id}]{${mk_tex_text(abstract.title)}}
 ${mk_authors(abstract.authors)}
 ${mk_affiliations(abstract.affiliations)}
 %if abstract.doi:
@@ -146,7 +153,9 @@ doi: \href{http://dx.doi.org/${abstract.doi}}{${abstract.doi}}
 \begin{abstracttext}
 ${abstract.text}
 \end{abstracttext}
-
+%if abstract.alt_id > 0 and abstract.conference is not None:
+  \textbf{See also Poster}: ${abstract.conference.sort_id_to_string(abstract.alt_id)}
+%endif
 %if len(abstract.figures) and include_figures:
     ${mk_figure(abstract.figures[0])}
 %endif
