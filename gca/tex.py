@@ -112,6 +112,9 @@ import os
 %% environment for formatting the affiliations:
 \newenvironment{affiliations}{\footnotesize\itshape\begin{enumerate}}{\end{enumerate}}
 
+%% environment for formatting the abstract main text:
+\newenvironment{abstracttext}{\noindent\hspace*{-0.8ex}}{}
+
 %% environment for formatting the figure block:
 \newenvironment{afigure}{\begin{center}\begin{minipage}{0.9\textwidth}}{\end{minipage}\end{center}}
 %% the maximum height of a figure:
@@ -135,7 +138,7 @@ import os
 %%%%%%%%%%%%%
 \mainmatter
 
-\chapter{Etho 2020 --- Talks}
+\chapter{Etho 2020 --- Poster}
 
 %endif
 
@@ -183,7 +186,9 @@ ${mk_affiliations(abstract.affiliations)}
 doi: \href{http://dx.doi.org/${abstract.doi}}{${abstract.doi}}
 %endif
 
+\begin{abstracttext}
 ${abstract.text}
+\end{abstracttext}
 
 %if abstract.alt_id > 0 and abstract.conference is not None:
   \textbf{See also Poster}: ${abstract.conference.sort_id_to_string(abstract.alt_id)}
