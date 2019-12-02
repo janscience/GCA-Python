@@ -100,9 +100,8 @@ import os
 
 \usepackage[breaklinks=true,colorlinks=true,citecolor=blue!30!black,urlcolor=blue!30!black,linkcolor=blue!30!black]{hyperref}
 
-\usepackage{multind}
-\makeindex{pages}
-\makeindex{posterid}
+\usepackage{imakeidx}
+\makeindex[name=authors, title={Author index}]
 
 %% environment for formatting the whole abstract:
 \newenvironment{abstractblock}{}{\newpage}
@@ -136,6 +135,8 @@ import os
 %%%%%%%%%%%%%
 \mainmatter
 
+\chapter{Etho 2020 --- Talks}
+
 %endif
 
 
@@ -166,10 +167,8 @@ cur_state = check_cur_state(None, None)
 %% appendix
 %if not bare:
 \backmatter
-\chapter{Index}
-\sffamily\footnotesize
-\chapter{Index}
-\printindex{pages}{Authors}
+
+\printindex[authors]
 
 \end{document}
 %endif
@@ -216,7 +215,7 @@ Talk: ${mk_tex_text(abstract.reason_for_talk)}\\*[-0.5ex]
      sep = ', ' if idx+1 < len(authors) else ''
      aff = author.format_affiliation()
      epi = '$^{%s}$' % aff if aff else ''
-  %> ${author.format_name()}${epi}${sep}\index{pages}{${author.index_name}}
+  %> ${author.format_name()}${epi}${sep}\index[authors]{${author.index_name}}
 % endfor
 \end{authors}
 </%def>
