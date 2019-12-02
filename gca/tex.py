@@ -49,50 +49,84 @@ import os
 
 \documentclass[a4paper,10pt,oneside]{book}
 
-\usepackage{ucs}
-\usepackage[utf8x]{inputenc}
-\usepackage[LGR, T1]{fontenc}
+%% math support:
+\usepackage{amsmath}    % needs to be included before the wasysym package
+\usepackage{mathtools}
+
+%% encoding and fonts:
+\usepackage[LGR,T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newunicodechar}
+
 \usepackage{textcomp}
 \usepackage{textgreek}
-\usepackage{microtype}
-\DeclareUnicodeCharacter{8208}{-}
-\DeclareUnicodeCharacter{8210}{-}
-\DeclareUnicodeCharacter{8239}{ }
-\DeclareUnicodeCharacter{8288}{}
-\DeclareUnicodeCharacter{57404}{t}
-\DeclareUnicodeCharacter{700}{'}
-
-\usepackage[english]{babel}
-
-\usepackage{mathtools}
 \usepackage{amssymb}
+\usepackage{wasysym}
+\usepackage[squaren]{SIunits}
+
+\usepackage{microtype}
+
+%% add missing definitions of unicode characters:
+\newunicodechar{³}{^3}
+\newunicodechar{µ}{\micro}
+\newunicodechar{°}{\degree}
+\newunicodechar{♀}{\female}
+\newunicodechar{♂}{\male}
+\newunicodechar{´}{'}
+
+\DeclareUnicodeCharacter{8208}{-}    % HYPHEN
+\DeclareUnicodeCharacter{8210}{-}    % DASH
+\DeclareUnicodeCharacter{8239}{\,}   % NARROW SPACE
+\DeclareUnicodeCharacter{8288}{}
+%%\DeclareUnicodeCharacter{700}{'}
+%%\usepackage{tipa}
+%%\DeclareUnicodeCharacter{57404}{\textiota}
+
+%% language:
+\usepackage[english]{babel}
 
 %%\usepackage{chapterthumb}
 
+%% graphics and figures:
+\usepackage{xcolor}
 % if figures is not None:
-\usepackage{caption}
 \usepackage{graphicx}
 \graphicspath{ {${figures}/} }
+\usepackage[format=plain,singlelinecheck=off,labelfont=bf,font={small,sf}]{caption}
 %endif
 
 \usepackage[top=20mm, bottom=20mm, left=20mm, right=20mm]{geometry}
 \setcounter{secnumdepth}{-1}
 
-\usepackage{xcolor}
 \usepackage[breaklinks=true,colorlinks=true,citecolor=blue!30!black,urlcolor=blue!30!black,linkcolor=blue!30!black]{hyperref}
 
 \usepackage{multind}
 \makeindex{pages}
 \makeindex{posterid}
 
-\newenvironment{abstractblock}{\newpage\noindent\begin{minipage}[t]{1.\textwidth}}{\end{minipage}\vskip \glueexpr\smallskipamount + 0pt plus 10ex minus 3ex\relax
-    \pagebreak[3]}
+%% environment for formatting the whole abstract:
+\newenvironment{abstractblock}{}{\newpage}
+
+%% environment for formatting the authors block:
 \newenvironment{authors}{}{}
+
+%% environment for formatting the affiliations:
 \newenvironment{affiliations}{\footnotesize\itshape\begin{enumerate}}{\end{enumerate}}
-\newenvironment{abstracttext}{}{}
+
+%% environment for formatting the figure block:
+\newenvironment{afigure}{\begin{center}\begin{minipage}{0.9\textwidth}}{\end{minipage}\end{center}}
+%% the maximum height of a figure:
+\newlength{\figureheight}
+\setlength{\figureheight}{0.35\textheight}
+
+%% environment for formatting the acknowledgements block:
 \newenvironment{acknowledgements}{\small}{}
-\newenvironment{references}{\footnotesize\begin{list}{}{\leftmargin=1.5em \listparindent=0pt \rightmargin=0pt \topsep=0.5ex \parskip=0pt \partopsep=0pt \itemsep=0pt \parsep=0pt}
-}{\end{list}}
+
+%% environment for formatting the references:
+\newenvironment{references}%
+  {\footnotesize\begin{list}{}{\leftmargin=1.5em \listparindent=0pt \rightmargin=0pt \topsep=0.5ex \parskip=0pt \partopsep=0pt \itemsep=0pt \parsep=0pt}}%
+  {\end{list}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -150,9 +184,8 @@ ${mk_affiliations(abstract.affiliations)}
 doi: \href{http://dx.doi.org/${abstract.doi}}{${abstract.doi}}
 %endif
 
-\begin{abstracttext}
 ${abstract.text}
-\end{abstracttext}
+
 %if abstract.alt_id > 0 and abstract.conference is not None:
   \textbf{See also Poster}: ${abstract.conference.sort_id_to_string(abstract.alt_id)}
 %endif
@@ -213,13 +246,10 @@ ${mk_tex_text(acknowledgements)}
 </%def>
 
 <%def name="mk_figure(figure)">
-\vspace{1mm}\makebox[\textwidth][c]{\begin{minipage}[c]{0.9\linewidth}
-    \centering
-    \includegraphics[width=0.50\textwidth]{${figure.uuid}}
+\begin{afigure}
+    \centerline{\includegraphics[width=1\linewidth, height=1\figureheight, keepaspectratio]{${figure.uuid}}}
     \captionof*{figure}{\small ${mk_tex_text(figure.caption)}}
-\end{minipage}
-\vspace{1em}
-}
+\end{afigure}
 </%def>
 
 <%def name="mk_doi(ref)">
