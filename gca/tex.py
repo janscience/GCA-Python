@@ -73,6 +73,7 @@ import os
 \newunicodechar{♀}{\female}
 \newunicodechar{♂}{\male}
 \newunicodechar{´}{'}
+\newunicodechar{−}{\text{--}}
 
 \DeclareUnicodeCharacter{8208}{-}    % HYPHEN
 \DeclareUnicodeCharacter{8210}{-}    % DASH
@@ -137,8 +138,6 @@ import os
 
 %%%%%%%%%%%%%
 \mainmatter
-
-\chapter{Etho 2020 --- Poster}
 
 %endif
 

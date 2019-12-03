@@ -70,7 +70,7 @@ if __name__ == '__main__':
     sys.stderr.write('[I] Pre-processing abstracts\n')
     txt = text_replace_all(txt, text_replacements['input'])
     data = json.loads(txt)
-    abstracts = [sanitize_abstract(Abstract(abstract, conference=conf), text_replacements) for abstract in data if abstract["abstrTypes"][0]["short"] == "poster"]  # this cannot be done with gca-filter!
+    abstracts = [sanitize_abstract(Abstract(abstract, conference=conf), text_replacements) for abstract in data]
     sys.stderr.write('[I] %d abstracts. Generating tex [figures: %s, conference: %s]\n' %
                      (len(abstracts), 'yes' if args.figures else 'NO', 'yes' if conf is not None else 'No'))
 
