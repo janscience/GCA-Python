@@ -47,7 +47,7 @@ import os
 
 %if not bare:
 
-\documentclass[a4paper,10pt,oneside]{book}
+\documentclass[a4paper,11pt,oneside]{book}
 
 %% math support:
 \usepackage{amsmath}    % needs to be included before the wasysym package
@@ -80,6 +80,12 @@ import os
 \DeclareUnicodeCharacter{8239}{\,}   % NARROW SPACE
 \DeclareUnicodeCharacter{8288}{}
 %%\DeclareUnicodeCharacter{700}{'}
+\DeclareUnicodeCharacter{FB00}{ff}
+\DeclareUnicodeCharacter{FB01}{fi}
+\DeclareUnicodeCharacter{FB02}{fl}
+\DeclareUnicodeCharacter{FB03}{ffi}
+\DeclareUnicodeCharacter{FB04}{ffl}
+\DeclareUnicodeCharacter{FB05}{ft}
 %%\usepackage{tipa}
 %%\DeclareUnicodeCharacter{57404}{\textiota}
 
@@ -90,28 +96,71 @@ import os
 
 %% graphics and figures:
 \usepackage{xcolor}
+
+%% UT primary colors:
+\definecolor{red}{RGB}{165,30,55}
+\definecolor{gray}{RGB}{50,65,75}
+\definecolor{gold}{RGB}{180,160,105}
+
+%% UT secondary colors:
+\definecolor{darkblue}{RGB}{65,90,140}
+\definecolor{blue}{RGB}{0,105,170}
+\definecolor{lightblue}{RGB}{80,170,200}
+\definecolor{turquoise}{RGB}{130,185,160}
+\definecolor{lightgreen}{RGB}{125,165,75}
+\definecolor{green}{RGB}{50,110,30}
+\definecolor{lightred}{RGB}{200,80,60}
+\definecolor{purple}{RGB}{175,110,150}
+\definecolor{lightpurple}{RGB}{180,160,150}
+\definecolor{lightbrown}{RGB}{215,180,105}
+\definecolor{orange}{RGB}{210,150,0}
+\definecolor{brown}{RGB}{145,105,70}
+
 % if figures is not None:
 \usepackage{graphicx}
 \graphicspath{ {${figures}/} }
 \usepackage[format=plain,singlelinecheck=off,labelfont=bf,font={small,sf}]{caption}
 %endif
 
-\usepackage[top=20mm, bottom=20mm, left=20mm, right=20mm]{geometry}
-\setcounter{secnumdepth}{-1}
+%% layout:
+\usepackage[top=20mm, bottom=20mm, left=23mm, right=23mm, headsep=9mm, marginparsep=5mm]{geometry}
 
-\usepackage[breaklinks=true,colorlinks=true,citecolor=blue!30!black,urlcolor=blue!30!black,linkcolor=blue!30!black]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\fboxsep}{0pt}
+\setlength{\unitlength}{1mm}
+\newcommand{\headertext}{Poster}
+\newcommand{\headercolor}{green}
+\fancyhead[RO]{\begin{picture}(0,0)\put(0,3){\colorbox{\headercolor}{\makebox[23mm][c]{\sffamily\Large \rule[-1.5ex]{0pt}{5ex}\textcolor{white}{\headertext}}}}\end{picture}}
+\fancyhead[LE]{\begin{picture}(0,0)\put(-23,3){\colorbox{\headercolor}{\makebox[23mm][c]{\sffamily\Large \rule[-1.5ex]{0pt}{5ex}\textcolor{white}{\headertext}}}}\end{picture}}
+\fancyhead[LO,RE]{15. Annual Meeting of the Ethological Society, T\"ubingen, 2020}
+\fancyfoot[LE,RO]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\usepackage{marginnote}
+
+\usepackage[sf,bf]{titlesec}
+\setcounter{secnumdepth}{1}
+\newcommand{\gwinner}{}
+\titleformat{\section}{\sffamily\Large\bfseries}{}{0em}{\marginnote{\huge P\arabic{section}\\[-1.7ex]{\normalfont\sffamily\tiny \gwinner}}[-2.4ex]}
 
 \usepackage{imakeidx}
 \makeindex[name=authors, title={Author index}]
 
+\usepackage[breaklinks=true,colorlinks=true,citecolor=blue!30!black,urlcolor=blue!30!black,linkcolor=blue!30!black]{hyperref}
+
 %% environment for formatting the whole abstract:
-\newenvironment{abstractblock}{}{\newpage}
+\newenvironment{abstractblock}{}{}
+\newcommand{\abstractsection}[3][]{\renewcommand{\gwinner}{#1}\section[#2]{#3}}
 
 %% environment for formatting the authors block:
-\newenvironment{authors}{}{}
+\newenvironment{authors}{\begin{sffamily}}{\end{sffamily}}
+\newcommand{\firstname}[1]{#1}
+\newcommand{\lastname}[1]{\textbf{#1}}
 
 %% environment for formatting the affiliations:
-\newenvironment{affiliations}{\footnotesize\itshape\begin{enumerate}}{\end{enumerate}}
+\newenvironment{affiliations}{\footnotesize\sffamily\begin{enumerate}}{\end{enumerate}}
 
 %% environment for formatting the abstract main text:
 \newenvironment{abstracttext}{\noindent\hspace*{-0.8ex}}{}
@@ -168,6 +217,8 @@ cur_state = check_cur_state(None, None)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% appendix
 %if not bare:
+\renewcommand{\headertext}{Index}
+\renewcommand{\headercolor}{white}
 \backmatter
 
 \printindex[authors]
@@ -178,7 +229,7 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
 \begin{abstractblock}
-\subsection[${abstract.poster_id}]{${mk_tex_text(abstract.title)}}
+\abstractsection[Gwinner]{${abstract.poster_id}}{${mk_tex_text(abstract.title)}}
 ${mk_authors(abstract.authors)}
 ${mk_affiliations(abstract.affiliations)}
 %if abstract.doi:
@@ -219,7 +270,7 @@ Talk: ${mk_tex_text(abstract.reason_for_talk)}\\*[-0.5ex]
      sep = ', ' if idx+1 < len(authors) else ''
      aff = author.format_affiliation()
      epi = '$^{%s}$' % aff if aff else ''
-  %> ${author.format_name()}${epi}${sep}\index[authors]{${author.index_name}}
+  %> ${author.latex_format_name()}${epi}${sep}\index[authors]{${author.index_name}}
 % endfor
 \end{authors}
 </%def>

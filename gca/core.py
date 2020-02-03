@@ -229,6 +229,20 @@ class Author(Entity):
         middle = d['middleName'] + u' ' if d['middleName'] else u""
         return d['firstName'] + u' ' + middle + d['lastName']
 
+    def latex_format_name(self, inverted=False):
+        d = self._data
+
+        if inverted:
+            middle = self.format_initials(d['middleName'], suffix='.')
+            if middle and len(middle):
+                middle = ' ' + middle
+            return u"\\lastname{%s}, \\firstname{%s%s}" % (d['lastName'], d['firstName'], middle)
+
+        first_middle = d['firstName']
+        if d['middleName']:
+            first_middle += u' ' + d['middleName']
+        return u"\\firstname{%s} \\lastname{%s}" % (first_middle, d['lastName'])
+
     def format_affiliation(self):
         af = self._data['affiliations']
         af_corrected = [str(x + 1) for x in sorted(af)]
