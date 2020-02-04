@@ -157,10 +157,8 @@ import os
 %else:
 \newcommand{\newabstract}{}
 %endif
-%% Command for setting the abstract's title. First argument is some optional string, second is poster ID, third is the title
-\newcommand{\abstractsection}[3][]{\section[#2]{#3}}
-%% Command for making a list of abstracts with the name of the first author and the title.
-\newcommand{\abstractinfo}[2]{}
+%% Command for setting the abstract's title. First argument is some optional string, second is poster ID, third is last name of first author, fourth is title of abstract
+\newcommand{\abstractsection}[4][]{\section[#3: #4]{#4}}
 
 %% environment for formatting the authors block:
 \newenvironment{authors}{\begin{flushleft}\setstretch{1.2}\sffamily}{\end{flushleft}\vspace{-3ex}}
@@ -235,8 +233,7 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
 \begin{abstractblock}
-\abstractsection[Gwinner]{${abstract.poster_id}}{${mk_tex_text(abstract.title)}}
-\abstractinfo{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title)}}
+\abstractsection[Gwinner]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title)}}
 ${mk_authors(abstract.authors)}
 ${mk_affiliations(abstract.affiliations)}
 %if abstract.doi:
