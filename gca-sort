@@ -31,7 +31,6 @@ def sanitize_field(x):
         return s.strip()
     elif isinstance(x, (tuple, list)):
         x = [sanitize_field(xx) for xx in x]
-        print(x, file=sys.stderr)
     return x
 
 
