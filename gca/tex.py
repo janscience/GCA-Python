@@ -142,8 +142,7 @@ import os
 
 \usepackage[sf,bf]{titlesec}
 \setcounter{secnumdepth}{1}
-\newcommand{\gwinner}{}
-\titleformat{\section}{\sffamily\Large\bfseries}{}{0em}{\marginnote{\huge P\arabic{section}\\[-1.7ex]{\normalfont\sffamily\tiny \gwinner}}[-2.4ex]}
+\titleformat{\section}{\sffamily\Large\bfseries}{}{0em}{\marginnote{\huge P\arabic{section}}[-2.4ex]}
 
 \usepackage{imakeidx}
 \makeindex[name=authors, title={Author index}]
@@ -152,15 +151,22 @@ import os
 
 %% environment for formatting the whole abstract:
 \newenvironment{abstractblock}{}{}
-\newcommand{\abstractsection}[3][]{\renewcommand{\gwinner}{#1}\section[#2]{#3}}
+%if single_page:
+\newcommand{\newabstract}{\clearpage}
+%else:
+\newcommand{\newabstract}{}
+%endif
+\newcommand{\newabstract}{}
+\newcommand{\abstractsection}[3][]{\section[#2]{#3}}
 
 %% environment for formatting the authors block:
-\newenvironment{authors}{\begin{sffamily}}{\end{sffamily}}
+\newenvironment{authors}{\begin{flushleft}\setstretch{1.2}\sffamily}{\end{flushleft}\vspace{-3ex}}
+\newcommand{\authorname}[1]{\mbox{#1}}
 \newcommand{\firstname}[1]{#1}
 \newcommand{\lastname}[1]{\textbf{#1}}
 
 %% environment for formatting the affiliations:
-\newenvironment{affiliations}{\footnotesize\sffamily\begin{enumerate}}{\end{enumerate}}
+\newenvironment{affiliations}{\begin{flushleft}\begin{enumerate}\setlength{\itemsep}{-0.5ex}\footnotesize\sffamily}{\end{enumerate}\end{flushleft}}
 
 %% environment for formatting the abstract main text:
 \newenvironment{abstracttext}{\noindent\hspace*{-0.8ex}}{}
@@ -209,9 +215,6 @@ cur_state = check_cur_state(None, None)
     %endif
 
     ${mk_abstract(idx, abstract, figures is not None, show_meta)}
-    %if single_page:
-    \clearpage
-    %endif
 % endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,6 +264,7 @@ Talk: ${mk_tex_text(abstract.reason_for_talk)}\\*[-0.5ex]
 \normalsize
 %endif
 \end{abstractblock}
+\newabstract
 </%def>
 
 <%def name="mk_authors(authors)">

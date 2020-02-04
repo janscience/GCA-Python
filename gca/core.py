@@ -236,12 +236,12 @@ class Author(Entity):
             middle = self.format_initials(d['middleName'], suffix='.')
             if middle and len(middle):
                 middle = ' ' + middle
-            return u"\\lastname{%s}, \\firstname{%s%s}" % (d['lastName'], d['firstName'], middle)
+            return u"\\authorname{\\lastname{%s}, \\firstname{%s%s}}" % (d['lastName'], d['firstName'], middle)
 
         first_middle = d['firstName']
         if d['middleName']:
             first_middle += u' ' + d['middleName']
-        return u"\\firstname{%s} \\lastname{%s}" % (first_middle, d['lastName'])
+        return u"\\authorname{\\firstname{%s} \\lastname{%s}}" % (first_middle, d['lastName'])
 
     def format_affiliation(self):
         af = self._data['affiliations']

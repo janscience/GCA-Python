@@ -21,10 +21,17 @@ def sanitize_field(x):
     if type(x) == bytes:
         return x.strip()
     elif isinstance(x, string_types):
+        """ Why only the first character???
         if x[0] in s_conv:
             x = s_conv[x[0]] + x[1:]
-        return x.strip()
-
+        """
+        s = ''
+        for i in range(len(x)):
+            s += s_conv[x[i]] if x[i] in s_conv else x[i]
+        return s.strip()
+    elif isinstance(x, (tuple, list)):
+        x = [sanitize_field(xx) for xx in x]
+        print(x, file=sys.stderr)
     return x
 
 
