@@ -158,13 +158,14 @@ import os
 \newcommand{\newabstract}{}
 %endif
 %% Command for setting the abstract's title. First argument is some optional string, second is poster ID, third is last name of first author, fourth is title of abstract
-\newcommand{\abstractsection}[4][]{\section[#3: #4]{#4}}
+\newcommand{\abstracttitle}[4][]{\section[#3: #4]{#4}}
 
 %% environment for formatting the authors block:
 \newenvironment{authors}{\begin{flushleft}\setstretch{1.2}\sffamily}{\end{flushleft}\vspace{-3ex}}
-\newcommand{\authorname}[1]{\mbox{#1}}
-\newcommand{\firstname}[1]{#1}
-\newcommand{\lastname}[1]{\textbf{#1}}
+%% formatting of author names (first, middle, first initial, middle initial, last name):
+\newcommand{\authorname}[5]{\mbox{#1#2 \textbf{#5}}}  %% first and middle name plus bold last name
+%% \newcommand{\authorname}[5]{\mbox{\textbf{#5}, #3#4}}  %% bold last name, first and middle initials
+%% \newcommand{\authorname}[5]{\mbox{\textbf{#5}, #1#4}}  %% bold last name, full first name and middle initials
 
 %% environment for formatting the affiliations:
 \newenvironment{affiliations}{\begin{flushleft}\begin{enumerate}\setlength{\itemsep}{-0.5ex}\footnotesize\sffamily}{\end{enumerate}\end{flushleft}}
@@ -233,7 +234,7 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
 \begin{abstractblock}
-\abstractsection[Gwinner]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title)}}
+\abstracttitle[Gwinner]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title)}}
 ${mk_authors(abstract.authors)}
 ${mk_affiliations(abstract.affiliations)}
 %if abstract.doi:
@@ -265,6 +266,7 @@ Talk: ${mk_tex_text(abstract.reason_for_talk)}\\*[-0.5ex]
 \normalsize
 %endif
 \end{abstractblock}
+
 \newabstract
 </%def>
 
