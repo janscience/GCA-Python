@@ -180,11 +180,11 @@ import os
 \setlength{\figureheight}{0.35\textheight}
 
 %% environment for formatting the acknowledgements block:
-\newenvironment{acknowledgements}{\small}{}
+\newenvironment{acknowledgements}{\subsubsection{Acknowledgements}\small}{}
 
 %% environment for formatting the references:
 \newenvironment{references}%
-  {\footnotesize\begin{list}{}{\leftmargin=1.5em \listparindent=0pt \rightmargin=0pt \topsep=0.5ex \parskip=0pt \partopsep=0pt \itemsep=0pt \parsep=0pt}}%
+  {\subsubsection{References}\footnotesize\begin{list}{}{\leftmargin=1.5em \listparindent=0pt \rightmargin=0pt \topsep=0.5ex \parskip=0pt \partopsep=0pt \itemsep=0pt \parsep=0pt}}%
   {\end{list}}
 
 
@@ -291,14 +291,12 @@ Talk: ${mk_tex_text(abstract.reason_for_talk)}\\*[-0.5ex]
 </%def>
 
 <%def name="mk_acknowledgements(acknowledgements)">
-\subsubsection{Acknowledgements}
 \begin{acknowledgements}
 ${mk_tex_text(acknowledgements)}
 \end{acknowledgements}
 </%def>
 
 <%def name="mk_references(references)">
-\subsubsection{References}
 \begin{references}
 %for idx, ref in enumerate(references):
   \item[${idx+1}] ${mk_tex_text(ref.display_text)} ${mk_doi(ref)}
