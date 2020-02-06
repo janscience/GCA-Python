@@ -49,6 +49,9 @@ import os
 
 \documentclass[a4paper,11pt,oneside]{book}
 
+%% customize the abstracts using the environments and commands
+%% provided at the end of the header!
+
 %% math support:
 \usepackage{amsmath}    % needs to be included before the wasysym package
 \usepackage{mathtools}
@@ -89,33 +92,13 @@ import os
 %%\usepackage{tipa}
 %%\DeclareUnicodeCharacter{57404}{\textiota}
 
+%%%%% basic layout %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% language:
 \usepackage[english]{babel}
 
-%%\usepackage{chapterthumb}
-
 %% graphics and figures:
 \usepackage{xcolor}
-
-%% UT primary colors:
-\definecolor{red}{RGB}{165,30,55}
-\definecolor{gray}{RGB}{50,65,75}
-\definecolor{gold}{RGB}{180,160,105}
-
-%% UT secondary colors:
-\definecolor{darkblue}{RGB}{65,90,140}
-\definecolor{blue}{RGB}{0,105,170}
-\definecolor{lightblue}{RGB}{80,170,200}
-\definecolor{turquoise}{RGB}{130,185,160}
-\definecolor{lightgreen}{RGB}{125,165,75}
-\definecolor{green}{RGB}{50,110,30}
-\definecolor{lightred}{RGB}{200,80,60}
-\definecolor{purple}{RGB}{175,110,150}
-\definecolor{lightpurple}{RGB}{180,160,150}
-\definecolor{lightbrown}{RGB}{215,180,105}
-\definecolor{orange}{RGB}{210,150,0}
-\definecolor{brown}{RGB}{145,105,70}
-
 % if figures is not None:
 \usepackage{graphicx}
 \graphicspath{ {${figures}/} }
@@ -123,84 +106,117 @@ import os
 %endif
 
 %% layout:
-\usepackage[top=20mm, bottom=20mm, left=23mm, right=23mm, headsep=9mm, marginparsep=5mm]{geometry}
+\usepackage[top=20mm, bottom=20mm, left=23mm, right=23mm]{geometry}
 
+\usepackage{setspace}
+
+%% customize header and footer:
+%% (you may want to add the conference title, the abstract number, etc.)
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\setlength{\fboxsep}{0pt}
-\setlength{\unitlength}{1mm}
-\newcommand{\headertext}{Poster}
-\newcommand{\headercolor}{green}
-\fancyhead[RO]{\begin{picture}(0,0)\put(0,3){\colorbox{\headercolor}{\makebox[23mm][c]{\sffamily\Large \rule[-1.5ex]{0pt}{5ex}\textcolor{white}{\headertext}}}}\end{picture}}
-\fancyhead[LE]{\begin{picture}(0,0)\put(-23,3){\colorbox{\headercolor}{\makebox[23mm][c]{\sffamily\Large \rule[-1.5ex]{0pt}{5ex}\textcolor{white}{\headertext}}}}\end{picture}}
-\fancyhead[LO,RE]{15. Annual Meeting of the Ethological Society, T\"ubingen, 2020}
-\fancyfoot[LE,RO]{\thepage}
+\fancyhead[LE,RO]{\thepage}
 \renewcommand{\headrulewidth}{0pt}
 
-\usepackage{marginnote}
-
+%% customize chapter and sections appearance:
+%% use commands of the titlesec package to modify the layout of the abstract's title:
 \usepackage[sf,bf]{titlesec}
-\setcounter{secnumdepth}{1}
-\titleformat{\section}{\sffamily\Large\bfseries}{}{0em}{\marginnote{\huge P\arabic{section}}[-2.4ex]}
+\titleformat{\section}{\sffamily\bfseries\Large\raggedright}{\thesection}{1em}{}
 
+%% number the abstracts, but do not number acknowledgements and references:
+\setcounter{secnumdepth}{1}
+%% abstract number without chapter number:
+\renewcommand{\thesection}{\arabic{section}}
+%%\renewcommand{\thesection}{P\arabic{section}}  % indicate poster
+
+%% generate author index:
 \usepackage{imakeidx}
 \makeindex[name=authors, title={Author index}]
 
+%% make nice clickable links:
 \usepackage[breaklinks=true,colorlinks=true,citecolor=blue!30!black,urlcolor=blue!30!black,linkcolor=blue!30!black]{hyperref}
 
-%% environment for formatting the whole abstract:
-\newenvironment{abstractblock}{}{}
-%% a command for separating subsequent abstracts:
+%%%%% abstract specific layout %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Each element of the abstract (title, authors, affiliations, text, ... is encapsulated
+%% in an environment or command as defined in the following.
+%% Change their definition to modify the appaerance of the abstracts.
+
+%% Environment for formatting the whole abstract:
+\newenvironment{abstractblock}
+  {}
+  {}
+
+%% Command for separating subsequent abstracts:
 %if single_page:
 \newcommand{\newabstract}{\clearpage}
 %else:
 \newcommand{\newabstract}{}
 %endif
-%% Command for setting the abstract's title. First argument is some optional string, second is poster ID, third is last name of first author, fourth is title of abstract
-\newcommand{\abstracttitle}[4][]{\section[#3: #4]{#4}}
 
-%% environment for formatting the authors block:
-\newenvironment{authors}{\begin{flushleft}\setstretch{1.2}\sffamily}{\end{flushleft}\vspace{-3ex}}
-%% formatting of author names (first, middle, first initial, middle initial, last name):
+%% Command for setting the abstract's title. It gets four arguments:
+%% 1. some optional string (user supplied by manual editing the latex file)
+%% 2. poster ID
+%% 3. last name of first author
+%% 4. title of abstract
+\newcommand{\abstracttitle}[4][]{\section[#3: #4]{#4}}
+%%\newcommand{\abstracttitle}[4][]{\section[#2]{#4}}
+
+%% Environment for formatting the authors block:
+\newenvironment{authors}
+  {\begin{flushleft}\setstretch{1.2}\sffamily}
+  {\end{flushleft}\vspace{-3ex}}
+
+%% Command for formatting of author names. Five arguments:
+%% 1. first name
+%% 2. middle name
+%% 3. initial of first name
+%% 4. initial of middle name
+%% 5. last name
 \newcommand{\authorname}[5]{\mbox{#1#2 \textbf{#5}}}  %% first and middle name plus bold last name
 %% \newcommand{\authorname}[5]{\mbox{\textbf{#5}, #3#4}}  %% bold last name, first and middle initials
 %% \newcommand{\authorname}[5]{\mbox{\textbf{#5}, #1#4}}  %% bold last name, full first name and middle initials
 
-%% environment for formatting the affiliations:
-\newenvironment{affiliations}{\begin{flushleft}\begin{enumerate}\setlength{\itemsep}{-0.5ex}\footnotesize\sffamily}{\end{enumerate}\end{flushleft}}
+%% Environment for formatting the affiliations:
+%% each affiliation is provided as an \item
+\newenvironment{affiliations}
+  {\begin{flushleft}\begin{enumerate}\setlength{\itemsep}{-0.5ex}\footnotesize\sffamily}
+  {\end{enumerate}\end{flushleft}}
 
-%% environment for formatting the abstract main text:
-\newenvironment{abstracttext}{\noindent\hspace*{-0.8ex}}{}
+%% Environment for formatting the abstract's main text:
+\newenvironment{abstracttext}
+  {\noindent\hspace*{-0.8ex}}
+  {}
 
-%% environment for formatting the figure block:
-\newenvironment{afigure}{\begin{center}\begin{minipage}{0.9\textwidth}}{\end{minipage}\end{center}}
-%% the maximum height of a figure:
+%% Environment for formatting the figure block:
+\newenvironment{afigure}
+  {\begin{center}\begin{minipage}{0.9\textwidth}}
+  {\end{minipage}\end{center}}
+  
+%% Maximum height of a figure:
 \newlength{\figureheight}
 \setlength{\figureheight}{0.35\textheight}
 
-%% environment for formatting the acknowledgements block:
-\newenvironment{acknowledgements}{\subsubsection{Acknowledgements}\small}{}
+%% Environment for formatting the acknowledgements block:
+\newenvironment{acknowledgements}
+  {\subsubsection{Acknowledgements}\small}
+  {}
 
-%% environment for formatting the references:
-\newenvironment{references}%
-  {\subsubsection{References}\footnotesize\begin{list}{}{\leftmargin=1.5em \listparindent=0pt \rightmargin=0pt \topsep=0.5ex \parskip=0pt \partopsep=0pt \itemsep=0pt \parsep=0pt}}%
+%% Environment for formatting the references:
+\newenvironment{references}
+  {\subsubsection{References}\footnotesize\begin{list}{}{\leftmargin=1.5em \listparindent=0pt \rightmargin=0pt \topsep=0.5ex \parskip=0pt \partopsep=0pt \itemsep=0pt \parsep=0pt}}
   {\end{list}}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
 \frontmatter
 
 %%%%%%%%%%%%%
 \mainmatter
-
 %endif
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <%
 cur_state = check_cur_state(None, None)
 %>
@@ -210,7 +226,7 @@ cur_state = check_cur_state(None, None)
     new_chapter, new_section = check_cur_state(abstract, cur_state)
 %>
     %if new_chapter is not None:
-    \cleardoublepage \chapter{${new_chapter}} \addtocounter{chapterthumb}{1} \newpage
+    \cleardoublepage \chapter{${new_chapter}} \newpage
     %endif
     %if new_section is not None:
     \section{${new_section}}
@@ -218,12 +234,9 @@ cur_state = check_cur_state(None, None)
 
     ${mk_abstract(idx, abstract, figures is not None, show_meta)}
 % endfor
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% appendix
 %if not bare:
-\renewcommand{\headertext}{Index}
-\renewcommand{\headercolor}{white}
 \backmatter
 
 \printindex[authors]
@@ -234,7 +247,7 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
 \begin{abstractblock}
-\abstracttitle[Gwinner]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title)}}
+\abstracttitle[]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title)}}
 ${mk_authors(abstract.authors)}
 ${mk_affiliations(abstract.affiliations)}
 %if abstract.doi:
@@ -244,7 +257,6 @@ doi: \href{http://dx.doi.org/${abstract.doi}}{${abstract.doi}}
 \begin{abstracttext}
 ${abstract.text}
 \end{abstracttext}
-
 %if abstract.alt_id > 0 and abstract.conference is not None:
   \textbf{See also Poster}: ${abstract.conference.sort_id_to_string(abstract.alt_id)}
 %endif
