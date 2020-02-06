@@ -4,25 +4,31 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from gca.core import Abstract
+from gca.util import simplify_str
 
 import sys
 import argparse
 import codecs
 
 
-def make_filter(string):
+def make_filter(string, exact=False):
     x = string.split('=')
     assert(len(x) == 2)
     field = x[0].strip()
     fl = x[1].strip()
 
-    return lambda abstract: abstract.select_field(field, fold=True) == fl
+    if exact:
+        return lambda abstract: abstract.select_field(field, fold=True) == fl
+    else:
+        fl = simplify_str(fl)
+        return lambda abstract: simplify_str(abstract.select_field(field, fold=True)) == fl
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GCA Filter - filter list of abstract by files')
     parser.add_argument('file', type=str, default='-')
     parser.add_argument('filter', type=str, nargs='+', help='filter to apply to each abstract')
+    parser.add_argument('-e', '--exact', default=False, action='store_true', help='Do use non-modified strings for comparisons. Default is to compare lower case and simplified strings.')
     parser.add_argument('--start-at', dest='P', default=None, type=int, help='start at abstract number')
     parser.add_argument('--max-num', dest='N', default=None, type=int, help='maximum number of abstracts to take')
     parser.add_argument('--or', dest='ft_or', default=False, action='store_true', help='use OR instead of AND')
@@ -32,7 +38,7 @@ if __name__ == '__main__':
     abstracts = Abstract.from_data(fd.read())
     fd.close()
 
-    filter_list = [make_filter(f) for f in args.filter]
+    filter_list = [make_filter(f, args.exact) for f in args.filter]
 
     if args.ft_or:
         result = []

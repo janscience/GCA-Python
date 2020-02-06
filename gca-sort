@@ -4,17 +4,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from gca.core import Abstract
-from gca.util import make_fields
-from six import string_types
+from gca.util import make_fields, simplify_str
 
 import argparse
 import codecs
 import sys
 
-
-s_from = u'aáàAâÂbBcCçÇdDeéEfFgGğĞhHiİîÎíīıIjJkKlLmMnNóoOöÖpPqQrRsSşŞtTuUûúÛüÜvVwWxXyYzZ'
-s_to   = u'aaaaaabbccccddeeeffgggghhiiiiiiiijjkkllmmnnoooooppqqrrssssttuuuuuuuvvwwxxyyzz'
-s_conv = dict(zip(s_from, s_to))
+from six import string_types
 
 
 def sanitize_field(x):
@@ -25,10 +21,7 @@ def sanitize_field(x):
         if x[0] in s_conv:
             x = s_conv[x[0]] + x[1:]
         """
-        s = ''
-        for i in range(len(x)):
-            s += s_conv[x[i]] if x[i] in s_conv else x[i]
-        return s.strip()
+        return simplify_str(x)
     elif isinstance(x, (tuple, list)):
         x = [sanitize_field(xx) for xx in x]
     return x

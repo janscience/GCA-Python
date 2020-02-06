@@ -1,3 +1,4 @@
+from six import string_types
 
 
 class Selector(object):
@@ -71,3 +72,19 @@ def make_selector(string):
 def make_fields(field_str):
     fields = field_str.split('.')
     return map(make_selector, fields)
+
+
+s_from = u'aáàAâÂbBcCçÇdDeéEfFgGğĞhHiİîÎíīıIjJkKlLmMnNóoOöÖpPqQrRsSşŞtTuUûúÛüÜvVwWxXyYzZ'
+s_to   = u'aaaaaabbccccddeeeffgggghhiiiiiiiijjkkllmmnnoooooppqqrrssssttuuuuuuuvvwwxxyyzz'
+s_conv = dict(zip(s_from, s_to))
+
+
+def simplify_str(val):
+    """ Simplify (lowercase, no-utf8 characters) string values for comparisons.
+    """
+    if isinstance(val, string_types):
+        y = map(lambda x: s_conv[x] if x in s_conv else x, val)
+        return ''.join(y).strip()
+    else:
+        return val
+
