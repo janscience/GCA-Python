@@ -182,6 +182,15 @@ import os
   {\begin{flushleft}\begin{enumerate}\setlength{\itemsep}{-0.5ex}\footnotesize\sffamily}
   {\end{enumerate}\end{flushleft}}
 
+\usepackage{xstring}
+%% Command for formatting each affiliation. Four arguments:
+%% 1. department
+%% 2. section
+%% 3. address
+%% 4. country
+%% Each of the arguments are either empty strings or preceded by ', '.
+\newcommand{\affiliation}[4]{\StrGobbleLeft{#1#2#3#4}{2}}
+
 %% Environment for formatting the abstract's main text:
 \newenvironment{abstracttext}
   {\noindent\hspace*{-0.8ex}}
@@ -234,9 +243,9 @@ cur_state = check_cur_state(None, None)
 
     ${mk_abstract(idx, abstract, figures is not None, show_meta)}
 % endfor
+%if not bare:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% appendix
-%if not bare:
 \backmatter
 
 \printindex[authors]
@@ -297,7 +306,7 @@ Talk: ${mk_tex_text(abstract.reason_for_talk)}\\*[-0.5ex]
 <%def name="mk_affiliations(affiliations)">
 \begin{affiliations}
 % for idx, affiliation in enumerate(affiliations):
-  \item[${idx+1}.] ${mk_tex_text(affiliation.format_affiliation())}
+  \item[${idx+1}.] ${mk_tex_text(affiliation.latex_format_affiliation())}
 % endfor
 \end{affiliations}
 </%def>

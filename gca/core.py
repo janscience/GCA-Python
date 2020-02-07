@@ -176,6 +176,14 @@ class Affiliation(Entity):
         active = filter(bool, components)
         return u', '.join(active)
 
+    def latex_format_affiliation(self):
+        department = self._data['department']
+        section = self._data['section']
+        address = self._data['address']
+        country = self._data['country']
+        components = [u', ' + c if c and len(c) else u'' for c in [department, section, address, country]]
+        return u'\\affiliation{' + '}{'.join(components) + '}'
+
 
 class Author(Entity):
     def __init__(self, data=None):
@@ -234,14 +242,20 @@ class Author(Entity):
         first = ''
         shortfirst = ''
         if d['firstName'] and len(d['firstName']):
-            first = d['firstName']
-            shortfirst = self.format_initials(d['firstName'], suffix='.')
+            first = d['firstName'].strip()
+            shortfirst = self.format_initials(d['firstName'],
+                                              separator=' ', suffix='.')
         middle = ''
         shortmiddle = ''
         if d['middleName'] and len(d['middleName']):
-            middle = u' ' + d['middleName']
-            shortmiddle = u' ' + self.format_initials(d['middleName'], suffix='.')
-        return u"\\authorname{%s}{%s}{%s}{%s}{%s}" % (first, middle, shortfirst, shortmiddle, d['lastName'])
+            middle = d['middleName'].strip()
+            if len(middle) == 1:
+                middle += '.'
+            middle = u' ' + middle
+            shortmiddle = u' ' + self.format_initials(d['middleName'],
+                                                      separator=' ',
+                                                      suffix='.')
+        return u"\\authorname{%s}{%s}{%s}{%s}{%s}" % (first, middle, shortfirst, shortmiddle, d['lastName'].strip())
 
     def format_affiliation(self):
         af = self._data['affiliations']
@@ -258,8 +272,8 @@ class Author(Entity):
     def format_initials(name, separator='', suffix=''):
         if not name:
             return ""
-        comps = name.split(' ')
-        return separator.join([a[0] + suffix for a in comps])
+        comps = [a.strip('.').split('.') for a in name.strip().split(' ')]
+        return separator.join([b[0] + suffix for a in comps for b in a])
 
 
 class Reference(Entity):
