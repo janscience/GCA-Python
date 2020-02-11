@@ -203,7 +203,7 @@ import os
   
 %% Maximum height of a figure:
 \newlength{\figureheight}
-\setlength{\figureheight}{0.35\textheight}
+\setlength{\figureheight}{0.3\textheight}
 
 %% Environment for formatting the acknowledgements block:
 \newenvironment{acknowledgements}
@@ -256,7 +256,7 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
 \begin{abstractblock}
-\abstracttitle[]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title)}}
+\abstracttitle[]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title).rstrip('.')}}
 ${mk_authors(abstract.authors)}
 ${mk_affiliations(abstract.affiliations)}
 %if abstract.doi:
