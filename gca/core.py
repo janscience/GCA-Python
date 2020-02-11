@@ -228,30 +228,31 @@ class Author(Entity):
     def format_name(self, inverted=False):
         d = self._data
 
+        first = self.sanitize_name(d['firstName'])
+
         if inverted:
             middle = self.format_initials(d['middleName'], suffix='.')
             if middle and len(middle):
-                middle = ' ' + middle
-            return "%s, %s%s" % (d['lastName'], d['firstName'], middle)
+                middle = u' ' + middle
+            return "%s, %s%s" % (d['lastName'], first, middle)
 
-        middle = d['middleName'] + u' ' if d['middleName'] else u""
-        return d['firstName'] + u' ' + middle + d['lastName']
+        middle = self.sanitize_name(d['middleName'])
+        middle = middle + u' ' if middle else u''
+        return first + u' ' + middle + d['lastName']
 
     def latex_format_name(self):
         d = self._data
         first = ''
         shortfirst = ''
         if d['firstName'] and len(d['firstName']):
-            first = d['firstName'].strip()
+            first = self.sanitize_name(d['firstName'], separator=' ', suffix='.')
             shortfirst = self.format_initials(d['firstName'],
                                               separator=' ', suffix='.')
         middle = ''
         shortmiddle = ''
         if d['middleName'] and len(d['middleName']):
-            middle = d['middleName'].strip()
-            if len(middle) == 1:
-                middle += '.'
-            middle = u' ' + middle
+            middle = u' ' + self.sanitize_name(d['middleName'], separator=' ',
+                                                      suffix='.')
             shortmiddle = u' ' + self.format_initials(d['middleName'],
                                                       separator=' ',
                                                       suffix='.')
@@ -269,11 +270,38 @@ class Author(Entity):
                             self.format_initials(self.middle_name))
 
     @staticmethod
+    def sanitize_name(name, separator='', suffix=''):
+        """ Apply to first and middle name to separate initials.
+        E.g. 'MS' -> 'M. S.'
+        E.g. 'M' -> 'M.'
+        """
+        if not name:
+            return ""
+        # make sure name is split after every '.' and around '-':
+        name = name.strip().replace('.', '. ')
+        name = name.replace('-', ' - ')
+        # split into components and also split double and triple initials (e.g. 'HJ'):
+        comps = [y for x in name.split() for y in (x if len(x)<=3 and x.isupper() and x.isalpha() else [x] )]
+        text = separator.join([a if len(a) > 1 else a[0] + suffix if a[0] != '-' else a[0] for a in comps])
+        if separator:
+            return text.replace(separator+'-'+separator, '-')
+        else:
+            return text
+
+    @staticmethod
     def format_initials(name, separator='', suffix=''):
         if not name:
             return ""
-        comps = [a.strip('.').split('.') for a in name.strip().split(' ')]
-        return separator.join([b[0] + suffix for a in comps for b in a])
+        # make sure name is split after every '.' and around '-':
+        name = name.strip().replace('.', '. ')
+        name = name.replace('-', ' - ')
+        # split into components and also split double and triple initials (e.g. 'HJ'):
+        comps = [y for x in name.split() for y in (x if len(x)<=3 and x.isupper() and x.isalpha() else [x] )]
+        text = separator.join([a[0] + suffix if a[0] != '-' else a[0] for a in comps])
+        if separator:
+            return text.replace(separator+'-'+separator, '-')
+        else:
+            return text
 
 
 class Reference(Entity):
@@ -759,3 +787,18 @@ class Session(object):
         js = json.dumps(data, sort_keys=True, indent=4,
                         separators=(',', ': '), ensure_ascii=False)
         return js
+
+
+if __name__ == "__main__":
+    # test author formatting:
+    names = [' Hans ', 'Hans', 'H.', 'H',
+             ' Hans Juergen ', 'Hans Juergen', 'H. J.', ' H. J. ', 'H.J.', 'H.J', 'HJ',
+             ' Hans - Juergen ', 'Hans-Juergen', 'H.-J.', ' H. - J. ', 'H.-J.', 'H-J',
+             ' Peter Hans - Juergen ', 'Peter Hans-Juergen', 'P. H.-J.', 'P. H. - J. ', 'P.H.-J.', 'P H-J', 'PH-J', 'PETER', 'PET', 'Pet', 'PETE']
+    print('sanitize_name():')
+    for n in names:
+        print('%-25s: %s' % (n, Author.sanitize_name(n, separator=' ', suffix='.')))
+    print()
+    print('format_initials():')
+    for n in names:
+        print('%-25s: %s' % (n, Author.format_initials(n, separator=' ', suffix='.')))

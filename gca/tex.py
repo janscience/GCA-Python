@@ -154,29 +154,28 @@ import os
 %endif
 
 %% Command for setting the abstract's title. It gets four arguments:
-%% 1. some optional string (user supplied by manual editing the latex file)
-%% 2. poster ID
-%% 3. last name of first author
-%% 4. title of abstract
-\newcommand{\abstracttitle}[4][]{\section[#3: #4]{#4}}
-%%\newcommand{\abstracttitle}[4][]{\section[#2]{#4}}
+%% 1. poster ID
+%% 2. last name of first author
+%% 3. title of abstract
+\newcommand{\abstracttitle}[3]{\section[#2: #3]{#3}}
+%%\newcommand{\abstracttitle}[3]{\section[#1]{#3}}
 
 %% Environment for formatting the authors block:
 \newenvironment{authors}
   {\begin{flushleft}\setstretch{1.2}\sffamily}
   {\end{flushleft}\vspace{-3ex}}
 
-%% Command for formatting of author names. Five arguments:
+%% Command for formatting author names. Five arguments:
 %% 1. first name
 %% 2. middle name
-%% 3. initial of first name
-%% 4. initial of middle name
+%% 3. initials of first name
+%% 4. initials of middle name
 %% 5. last name
-\newcommand{\authorname}[5]{\mbox{#1#2 \textbf{#5}}}  %% first and middle name plus bold last name
+\newcommand{\authorname}[5]{\mbox{#1#2 \textbf{#5}}}  %% full first and middle name plus bold last name
 %% \newcommand{\authorname}[5]{\mbox{\textbf{#5}, #3#4}}  %% bold last name, first and middle initials
 %% \newcommand{\authorname}[5]{\mbox{\textbf{#5}, #1#4}}  %% bold last name, full first name and middle initials
 
-%% Environment for formatting the affiliations:
+%% Environment for formatting affiliations:
 %% each affiliation is provided as an \item
 \newenvironment{affiliations}
   {\begin{flushleft}\begin{enumerate}\setlength{\itemsep}{-0.5ex}\footnotesize\sffamily}
@@ -204,6 +203,10 @@ import os
 %% Maximum height of a figure:
 \newlength{\figureheight}
 \setlength{\figureheight}{0.3\textheight}
+
+%% Command for including an image:
+\newcommand{\includeimage}[1]
+  {\centerline{\includegraphics[width=1\linewidth, height=1\figureheight, keepaspectratio]{#1}}}
 
 %% Environment for formatting the acknowledgements block:
 \newenvironment{acknowledgements}
@@ -256,7 +259,7 @@ cur_state = check_cur_state(None, None)
 
 <%def name="mk_abstract(idx, abstract, include_figures, print_meta)">
 \begin{abstractblock}
-\abstracttitle[]{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title).rstrip('.')}}
+\abstracttitle{${abstract.poster_id}}{${abstract.authors[0].last_name}}{${mk_tex_text(abstract.title).rstrip('.')}}
 ${mk_authors(abstract.authors)}
 ${mk_affiliations(abstract.affiliations)}
 %if abstract.doi:
@@ -327,7 +330,7 @@ ${mk_tex_text(acknowledgements)}
 
 <%def name="mk_figure(figure)">
 \begin{afigure}
-    \centerline{\includegraphics[width=1\linewidth, height=1\figureheight, keepaspectratio]{${figure.uuid}}}
+    \includeimage{${figure.uuid}}
     \captionof*{figure}{\small ${mk_tex_text(figure.caption)}}
 \end{afigure}
 </%def>
